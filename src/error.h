@@ -17,8 +17,10 @@ public:
 	Reporter(source::File &file);
 	void report(source::Location loc, const std::string &message);
 	void report(source::Range loc, const std::string &message);
+	bool any() const { return failed; }
 protected:
 	source::File &file;
+	bool failed = false;
 };
 
 } // namespace error

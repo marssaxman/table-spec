@@ -15,10 +15,12 @@ Reporter::Reporter(source::File &file):
 
 void Reporter::report(source::Location loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
+	failed = true;
 }
 
 void Reporter::report(source::Range loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
+	failed = true;
 }
 
 } // namespace error
