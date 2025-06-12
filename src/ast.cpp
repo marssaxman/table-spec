@@ -8,7 +8,33 @@
 
 namespace ast {
 
-Root::Root(source::Range loc):
-	Node(loc) {}
+Expression::Expression(Loc loc, Kind kind):
+	Node<Expression>(loc),
+	kind(kind) {}
+
+Component::Component(Loc loc, Kind kind):
+	Node<Component>(loc),
+	kind(kind) {}
+
+Ident::Ident(Loc loc, const std::string &value):
+	Expression(loc, Kind::Ident),
+	value(value) {}
+
+Schema::Schema(Loc loc, Ident::Ptr name):
+	Component(loc, Kind::Schema),
+	name(name) {}
+
+Column::Column(Loc loc, Ident::Ptr name):
+	Node<Column>(loc),
+	name(name) {}
+
+Table::Table(Loc loc, Ident::Ptr name, Column::Vec columns):
+	Component(loc, Kind::Table),
+	name(name),
+	columns(columns) {}
+
+Root::Root(Loc loc, Component::Vec components):
+	Node(loc),
+	components(components) {}
 
 } // namespace ast

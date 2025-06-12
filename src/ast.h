@@ -8,25 +8,84 @@
 
 #include <memory>
 #include <optional>
+#include <string>
+#include <vector>
 
 #include "source.h"
 
 namespace ast {
+
+using Loc = source::Range;
 
 template <class T> class Node {
 public:
 	virtual ~Node() = default;
 	using Ptr = std::shared_ptr<T>;
 	using Opt = std::optional<Ptr>;
-
+	using Vec = std::vector<Ptr>;
 protected:
-	Node(source::Range loc) : loc(loc) {}
-	source::Range loc = {};
+	Node(Loc loc) : loc(loc) {}
+	Loc loc = {};
 };
+
+// Abstract expression base
+class Expression : public Node<Expression> {
+public:
+	enum class Kind {
+		Ident,
+	};
+	const Kind kind;
+protected:
+	Expression(Loc, Kind);
+};
+
+// Abstract component base
+class Component : public Node<Component> {
+public:
+	enum class Kind {
+		Schema,
+		Table,
+	};
+	const Kind kind;
+protected:
+	Component(Loc, Kind);
+};
+
+// Expression nodes
+
+class Ident : public Expression {
+public:
+	Ident(Loc, const std::string &);
+	const std::string value;
+};
+
+// Component nodes
+
+class Schema : public Component {
+public:
+	Schema(Loc, Ident::Ptr);
+	Ident::Ptr name;
+};
+
+class Column : public Node<Column> {
+public:
+	Column(Loc, Ident::Ptr);
+	Ident::Ptr name;
+};
+
+class Table : public Component {
+public:
+	Table(Loc, Ident::Ptr name, Column::Vec columns);
+	Ident::Ptr name;
+	Column::Vec columns;
+};
+
+// Translation unit
 
 class Root : public Node<Root> {
 public:
-	Root(source::Range);
+	Root(Loc, Component::Vec);
+	Component::Vec components;
 };
 
 } // namespace ast
