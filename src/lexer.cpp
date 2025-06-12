@@ -56,7 +56,7 @@ Token Lexer::ident(source::Location begin) {
 Token Lexer::number(source::Location begin) {
 	do {
 		ch = in.take();
-	} while (isalnum(ch) || '_' == ch);
+	} while (isalnum(ch) || '.' == ch);
 	in.back();
 	return tok(Token::number, begin);
 }
