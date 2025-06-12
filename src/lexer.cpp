@@ -24,7 +24,7 @@ Token Lexer::peek() {
 
 void Lexer::next() {
 	if (forward) {
-		in = forward;
+		in = forward.value();
 		forward.reset();
 	} else {
 		(void)take();
@@ -32,12 +32,26 @@ void Lexer::next() {
 }
 
 Token Lexer::take() {
-	int ch = in.take();
-	switch (ch) {
-		case '{': return Token::brace_l;
-		case '}': return Token::brace_r;
+	if (in.eof()) {
+		return Token::eof;
 	}
-	return Token::eof;
+	begin_token();
+	int ch = in.take();
+	if (isalpha(ch)) {
+		do {
+			ch = in.take();
+		} while (isalnum(ch) || '_' == ch);
+		in.back();
+		return Token::ident;
+	}
+	if (isdigit(ch)) {
+		do {
+			ch = in.take();
+		} while (isalnum(ch) || '_' == ch);
+		in.back();
+		return Token::number;
+	}
+	return Token(ch);
 }
 
 bool Lexer::match(Token tk) {
@@ -49,12 +63,13 @@ void Lexer::error(const source::Location &loc, const std::string &message) {
 }
 
 void Lexer::begin_token() {
-	while (!in.eof() && (skip_spaces() || skip_comments()));
+	while (in.good() && (skip_spaces() || skip_comments()));
 }
 
 bool Lexer::skip_spaces() {
 	bool found = false;
-	for (int ch = in.peek(); isspace(ch); in.next()) {
+	for (int ch = in.peek(); isspace(ch); ch = in.peek()) {
+		in.next();
 		found = true;
 	}
 	return found;
@@ -76,12 +91,12 @@ bool Lexer::skip_comments() {
 }
 
 void Lexer::line_comment() {
-	for (int ch = in.take(); ch != '\n'; in.next());
+	for (int ch = in.take(); ch != '\n' && in.good(); ch = in.take());
 }
 
 void Lexer::block_comment() {
 	auto begin = in.loc();
-	for (int ch = in.take(); !in.eof(); ch = in.take()) {
+	for (int ch = in.take(); in.good(); ch = in.take()) {
 		if (ch == '*' && in.match('/')) return;
 		if (ch == '/' && in.match('*')) block_comment();
 	}

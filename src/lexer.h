@@ -15,13 +15,15 @@ namespace lexer {
 
 enum class Token : int {
 	eof = 0,
-	IDENT,
-	brace_l, brace_r,
+	ident = -1,
+	number = -2,
 };
 
 class Lexer {
 public:
 	Lexer(source::Reader&, error::Reporter&);
+	bool eof() const { return in.eof(); }
+	bool good() const { return in.good(); }
 	Token peek();
 	void next();
 	Token take();
