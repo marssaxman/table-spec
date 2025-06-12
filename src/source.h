@@ -18,6 +18,9 @@ struct Location {
 };
 
 struct Range {
+	Range() = default;
+	Range(Location x): begin(x), end(x) {}
+	Range(Location b, Location e): begin(b), end(e) {}
 	Location begin {};
 	Location end {};
 };

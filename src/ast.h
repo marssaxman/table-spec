@@ -23,20 +23,24 @@ public:
 	using Ptr = std::shared_ptr<T>;
 	using Opt = std::optional<Ptr>;
 	using Vec = std::vector<Ptr>;
+	template<typename... Params>
+	static Ptr make(Params&&... args) {
+		return std::make_shared<T>(std::forward<Params>(args)...);
+	}
+	const Loc loc;
 protected:
 	Node(Loc loc) : loc(loc) {}
-	Loc loc = {};
 };
 
 // Abstract expression base
-class Expression : public Node<Expression> {
+class Expr : public Node<Expr> {
 public:
 	enum class Kind {
 		Ident,
 	};
 	const Kind kind;
 protected:
-	Expression(Loc, Kind);
+	Expr(Loc, Kind);
 };
 
 // Abstract component base
@@ -53,7 +57,7 @@ protected:
 
 // Expression nodes
 
-class Ident : public Expression {
+class Ident : public Expr {
 public:
 	Ident(Loc, const std::string &);
 	const std::string value;
@@ -69,8 +73,10 @@ public:
 
 class Column : public Node<Column> {
 public:
-	Column(Loc, Ident::Ptr);
+	Column(Loc, Ident::Ptr name, Expr::Ptr type, Expr::Opt val);
 	Ident::Ptr name;
+	Expr::Ptr type;
+	Expr::Opt value;
 };
 
 class Table : public Component {

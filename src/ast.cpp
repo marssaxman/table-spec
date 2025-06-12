@@ -8,8 +8,8 @@
 
 namespace ast {
 
-Expression::Expression(Loc loc, Kind kind):
-	Node<Expression>(loc),
+Expr::Expr(Loc loc, Kind kind):
+	Node<Expr>(loc),
 	kind(kind) {}
 
 Component::Component(Loc loc, Kind kind):
@@ -17,16 +17,17 @@ Component::Component(Loc loc, Kind kind):
 	kind(kind) {}
 
 Ident::Ident(Loc loc, const std::string &value):
-	Expression(loc, Kind::Ident),
+	Expr(loc, Kind::Ident),
 	value(value) {}
 
 Schema::Schema(Loc loc, Ident::Ptr name):
 	Component(loc, Kind::Schema),
 	name(name) {}
 
-Column::Column(Loc loc, Ident::Ptr name):
+Column::Column(Loc loc, Ident::Ptr name, Expr::Ptr type, Expr::Opt val):
 	Node<Column>(loc),
-	name(name) {}
+	name(name),
+	value(val) {}
 
 Table::Table(Loc loc, Ident::Ptr name, Column::Vec columns):
 	Component(loc, Kind::Table),

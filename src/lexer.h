@@ -18,6 +18,9 @@ struct Token {
 		eof = 0,
 		ident = -1,
 		number = -2,
+		OPTIONAL = -3,
+		SCHEMA = -4,
+		TABLE = -5,
 	} type;
 	source::Range loc;
 };
@@ -32,6 +35,8 @@ public:
 	Token take();
 	bool match(Token::Type);
 private:
+	Token ident(source::Location begin);
+	Token number(source::Location begin);
 	void error(const source::Location&, const std::string&);
 	void begin_token();
 	bool skip_spaces();
