@@ -31,8 +31,10 @@ public:
 	Reader(const std::vector<char> &buffer);
 	bool eof() const { return pos == end; }
 	char peek() const { return eof() ? 0 : *pos; }
-	char take() { return eof() ? pad++, 0 : *pos++; }
-	void unget() { if (pad) pad--; else pos--; }
+	void next() { eof() ? (void)pad++ : (void)pos++; }
+	char take() { return eof() ? (pad++, 0) : *pos++; }
+	bool match(int ch) { return (ch == peek())? (next(), true): false; }
+	void back() { if (pad) pad--; else pos--; }
 	Location loc() const { return Location{.offset = unsigned(pos - buf)}; }
 
 private:

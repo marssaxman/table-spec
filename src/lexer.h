@@ -6,25 +6,38 @@
 
 #pragma once
 
-#include <error.h>
-#include <source.h>
+#include <optional>
+
+#include "error.h"
+#include "source.h"
 
 namespace lexer {
 
 enum class Token : int {
 	eof = 0,
+	IDENT,
+	brace_l, brace_r,
 };
 
 class Lexer {
 public:
 	Lexer(source::Reader&, error::Reporter&);
 	Token peek();
+	void next();
 	Token take();
 	bool match(Token);
-	source::Range loc() const;
 private:
+	void error(const source::Location&, const std::string&);
+	void begin_token();
+	bool skip_spaces();
+	bool skip_comments();
+	void line_comment();
+	void block_comment();
+
 	source::Reader &in;
 	error::Reporter &err;
+
+	std::optional<source::Reader> forward;
 };
 
 } // namespace lexer
