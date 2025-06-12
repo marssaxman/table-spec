@@ -13,10 +13,13 @@
 
 namespace lexer {
 
-enum class Token : int {
-	eof = 0,
-	ident = -1,
-	number = -2,
+struct Token {
+	enum Type : int32_t {
+		eof = 0,
+		ident = -1,
+		number = -2,
+	} type;
+	source::Range loc;
 };
 
 class Lexer {
@@ -27,7 +30,7 @@ public:
 	Token peek();
 	void next();
 	Token take();
-	bool match(Token);
+	bool match(Token::Type);
 private:
 	void error(const source::Location&, const std::string&);
 	void begin_token();
@@ -35,6 +38,7 @@ private:
 	bool skip_comments();
 	void line_comment();
 	void block_comment();
+	Token tok(Token::Type type, source::Location begin);
 
 	source::Reader &in;
 	error::Reporter &err;

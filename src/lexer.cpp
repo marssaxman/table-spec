@@ -33,29 +33,30 @@ void Lexer::next() {
 
 Token Lexer::take() {
 	if (in.eof()) {
-		return Token::eof;
+		return tok(Token::eof, in.loc());
 	}
 	begin_token();
+	source::Location start = in.loc();
 	int ch = in.take();
 	if (isalpha(ch)) {
 		do {
 			ch = in.take();
 		} while (isalnum(ch) || '_' == ch);
 		in.back();
-		return Token::ident;
+		return tok(Token::ident, start);
 	}
 	if (isdigit(ch)) {
 		do {
 			ch = in.take();
 		} while (isalnum(ch) || '_' == ch);
 		in.back();
-		return Token::number;
+		return tok(Token::number, start);
 	}
-	return Token(ch);
+	return tok(Token::Type(ch), start);
 }
 
-bool Lexer::match(Token tk) {
-	return (tk == peek())? next(), true: false;
+bool Lexer::match(Token::Type tk) {
+	return (tk == peek().type)? next(), true: false;
 }
 
 void Lexer::error(const source::Location &loc, const std::string &message) {
@@ -101,6 +102,11 @@ void Lexer::block_comment() {
 		if (ch == '/' && in.match('*')) block_comment();
 	}
 	error(begin, "non-terminated block comment");
+}
+
+Token Lexer::tok(Token::Type type, source::Location begin) {
+	auto loc = source::Range{.begin = begin, .end = in.loc()};
+	return Token{.type = type, .loc = loc};
 }
 
 } // namespace lexer

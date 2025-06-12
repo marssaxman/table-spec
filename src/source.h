@@ -8,22 +8,25 @@
 
 #include <cstdint>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace source {
-
-struct File {
-	std::string path;
-	std::vector<char> buffer;
-};
 
 struct Location {
 	uint32_t offset = 0;
 };
 
 struct Range {
-	Location begin;
-	Location end;
+	Location begin {};
+	Location end {};
+};
+
+struct File {
+	std::string get(Range);
+	std::pair<unsigned, unsigned> line_and_column(Location);
+	std::string path;
+	std::vector<char> buffer;
 };
 
 class Reader {
