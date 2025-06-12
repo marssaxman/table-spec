@@ -20,7 +20,7 @@ Parser::Parser(lexer::Lexer &in, error::Reporter &err):
 	err(err) {}
 
 ast::Root::Ptr Parser::parse() {
-	Component::Vec components;
+	Component::Vec items;
 
 	Token tok = in.peek();
 	source::Location begin = tok.loc.begin;
@@ -34,13 +34,13 @@ ast::Root::Ptr Parser::parse() {
 		}
 	}
 
-	Token last = lexer.take();
-	if (last != Token::eof) {
-		error(last.loc, "Unexpected input token");
+	Token last = in.take();
+	if (last.type != Token::eof) {
+		err.report(last.loc, "Unexpected input token");
 	}
 
-	source::Location end = components.empty()? begin: components.back().loc;
-	return Root::make(source::Range(begin, end), std::move(components));
+	source::Location end = items.empty()? begin: items.back()->loc.end;
+	return Root::make(source::Range(begin, end), std::move(items));
 }
 
 } // namespace parser

@@ -46,6 +46,7 @@ bool Lexer::match(Token::Type tk) {
 }
 
 Token Lexer::ident(source::Location begin) {
+	int ch {};
 	do {
 		ch = in.take();
 	} while (isalnum(ch) || '_' == ch);
@@ -54,6 +55,7 @@ Token Lexer::ident(source::Location begin) {
 }
 
 Token Lexer::number(source::Location begin) {
+	int ch {};
 	do {
 		ch = in.take();
 	} while (isalnum(ch) || '.' == ch);
