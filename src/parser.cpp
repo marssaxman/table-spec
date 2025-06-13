@@ -50,22 +50,16 @@ Node::Opt Parser::parse_term() {
 	return out;
 }
 
-template<typename T>
-void Parser::connect(cst::Node::Opt* &chain, cst::Node::Opt val) {
-	auto link = std::make_unique<T>(std::move(*val));
-	auto next = &link->next;
-	*chain = std::move(link);
-	chain = next;
-}
-
 Node::Opt Parser::parse_list() {
-	Node::Opt out;
-	Node::Opt *chain = &out;
-	while (auto val = parse_term()) {
-		if (out) {
-			connect<List>(chain, std::move(val));
-		} else {
-			out = std::move(val);
+	Node::Opt out = parse_term();
+	if (out) {
+		Node::Opt *chain = &out;
+		while (auto term = parse_term()) {
+			auto link = std::make_unique<List>(std::move(chain->value()));
+			link->next = std::move(term);
+			auto next = &link->next;
+			*chain = std::move(link);
+			chain = next;
 		}
 	}
 	return out;
@@ -77,7 +71,10 @@ Node::Opt Parser::parse_commas() {
 	while (in.good()) {
 		auto list = parse_list();
 		if (in.match(Token::comma)) {
-			connect<Comma>(chain, std::move(list));
+			auto link = std::make_unique<Comma>(std::move(list));
+			auto next = &link->next;
+			*chain = std::move(link);
+			chain = next;
 		} else {
 			*chain = std::move(list);
 			break;
@@ -92,7 +89,10 @@ Node::Opt Parser::parse_semicolons() {
 	while (in.good()) {
 		auto commas = parse_commas();
 		if (in.match(Token::semicolon)) {
-			connect<Semicolon>(chain, std::move(commas));
+			auto link = std::make_unique<Semicolon>(std::move(commas));
+			auto next = &link->next;
+			*chain = std::move(link);
+			chain = next;
 		} else {
 			*chain = std::move(commas);
 			break;

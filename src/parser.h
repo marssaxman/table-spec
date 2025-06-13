@@ -18,8 +18,6 @@ public:
 	cst::Node::Opt parse();
 private:
 	cst::Node::Opt parse_term();
-	template<typename T>
-	void connect(cst::Node::Opt* &chain, cst::Node::Opt val);
 	cst::Node::Opt parse_list();
 	cst::Node::Opt parse_commas();
 	cst::Node::Opt parse_semicolons();
