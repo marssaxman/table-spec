@@ -46,30 +46,30 @@ struct List : public Node {
 // Base class for terminal nodes
 struct Leaf : public Node {
 protected:
-	Leaf(Kind kind, Loc loc);
+	Leaf(Kind, Loc);
 public:
 	const Loc loc;
 };
 
 // Reserved identifier
 struct Keyword : public Leaf {
-	Keyword(Loc loc, int id);
+	Keyword(Loc, int id);
 	const int id;
 };
 
 // Any other identifier
 struct Ident : public Leaf {
-	Ident(Loc loc);
+	Ident(Loc);
 };
 
 // Numeric literal
 struct Number : public Leaf {
-	Number(Loc loc);
+	Number(Loc);
 };
 
 // Punctuation symbol
 struct Symbol : public Leaf {
-	Symbol(Loc loc, int ch);
+	Symbol(Loc, int ch);
 	const int ch;
 };
 
@@ -90,22 +90,22 @@ struct Comma : public Node {
 // Base class for subexpression groups
 struct Group : public Node {
 protected:
-	Group(Kind kind, Loc loc, Opt body);
+	Group(Kind, Loc, Opt body);
 public:
 	const Loc loc;
 	Opt body;
 };
 
 struct Parens : public Group {
-	Parens(Loc loc, Opt body);
+	Parens(Loc, Opt body);
 };
 
 struct Brackets : public Group {
-	Brackets(Loc loc, Opt body);
+	Brackets(Loc, Opt body);
 };
 
 struct Braces : public Group {
-	Braces(Loc loc, Opt body);
+	Braces(Loc, Opt body);
 };
 
 } // namespace cst

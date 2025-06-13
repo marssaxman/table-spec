@@ -22,7 +22,7 @@ Frontend::Frontend(const Config &config):
 cst::Node::Opt Frontend::run(const std::vector<char> &input, Reporter &err) {
 	source::Reader r(input);
 	lexer::Lexer l(r, err);
-	parser::Parser p(l, err);
+	parser::Parser p(l, err, keywords);
 	return p.parse();
 }
 

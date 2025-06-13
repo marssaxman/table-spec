@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include <map>
+#include <string>
+
 #include "rfl/cst.h"
 #include "rfl/reporter.h"
 #include "rfl/lexer.h"
@@ -15,9 +18,14 @@ namespace parser {
 
 class Parser {
 public:
-	Parser(lexer::Lexer &in, Reporter &err);
+	Parser(
+		lexer::Lexer &in,
+		Reporter &err,
+		const std::map<std::string, unsigned> &keywords
+	);
 	cst::Node::Opt parse();
 private:
+	cst::Node::Opt parse_ident(lexer::Token);
 	cst::Node::Opt parse_term();
 	cst::Node::Opt parse_list();
 	cst::Node::Opt parse_commas();
@@ -30,6 +38,7 @@ private:
 	cst::Node::Opt parse_braces(lexer::Token);
 	lexer::Lexer &in;
 	Reporter &err;
+	const std::map<std::string, unsigned> &keywords;
 };
 
 } // namespace parser

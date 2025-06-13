@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <map>
 #include <optional>
 #include <vector>
 
@@ -36,6 +35,7 @@ public:
 	void next();
 	Token take();
 	bool match(Token::Type);
+	std::string get(source::Range loc) { return in.get(loc); }
 private:
 	Token ident(source::Location begin);
 	Token number(source::Location begin);

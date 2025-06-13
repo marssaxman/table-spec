@@ -15,9 +15,23 @@ namespace parser {
 using lexer::Token;
 using namespace cst;
 
-Parser::Parser(lexer::Lexer &in, Reporter &err):
+Parser::Parser(
+		lexer::Lexer &in,
+		Reporter &err,
+		const std::map<std::string, unsigned> &keywords):
 	in(in),
-	err(err) {}
+	err(err),
+	keywords(keywords) {}
+
+Node::Opt Parser::parse_ident(lexer::Token tk) {
+	std::string value = in.get(tk.loc);
+	auto iter = keywords.find(value);
+	if (iter != keywords.end()) {
+		return std::make_unique<Keyword>(tk.loc, iter->second);
+	} else {
+		return std::make_unique<Ident>(tk.loc);
+	}
+}
 
 Node::Opt Parser::parse_term() {
 	Node::Opt out;
@@ -37,8 +51,7 @@ Node::Opt Parser::parse_term() {
 		case '{':
 			return parse_braces(tk);
 		case Token::ident:
-			out = std::make_unique<Ident>(tk.loc);
-			break;
+			return parse_ident(tk);
 		case Token::number:
 			out = std::make_unique<Number>(tk.loc);
 			break;
