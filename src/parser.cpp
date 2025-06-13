@@ -6,41 +6,138 @@
 
 #include <iostream>
 
-#include "ast.h"
 #include "lexer.h"
 #include "parser.h"
 
 namespace parser {
 
 using lexer::Token;
-using namespace ast;
+using namespace cst;
 
 Parser::Parser(lexer::Lexer &in, error::Reporter &err):
 	in(in),
 	err(err) {}
 
-ast::Root::Ptr Parser::parse() {
-	Component::Vec items;
+Node::Opt Parser::parse_term() {
+	Node::Opt out;
+	auto tk = in.peek();
+	switch ((int)tk.type) {
+		case Token::eof:
+		case ')':
+		case ']':
+		case '}':
+		case ';':
+		case ',':
+			break;
+		case '(':
+			return parse_parens(tk);
+		case '[':
+			return parse_brackets(tk);
+		case '{':
+			return parse_braces(tk);
+		case Token::ident:
+			out = std::make_unique<Ident>(tk.loc);
+			break;
+		case Token::number:
+			out = std::make_unique<Number>(tk.loc);
+			break;
+		default:
+			out = std::make_unique<Operator>(tk.loc, tk.type);
+	}
+	if (out.has_value()) {
+		in.next();
+	}
+	return out;
+}
 
-	Token tok = in.peek();
-	source::Location begin = tok.loc.begin;
-	for (bool done = false; in.good() && !done; tok = in.peek()) {
-		switch (tok.type) {
-			case Token::ident:
-			case Token::number:
-			case Token::eof:
-			default:
-				done = true;
+template<typename T>
+void Parser::connect(cst::Node::Opt* &chain, cst::Node::Opt val) {
+	auto link = std::make_unique<T>(std::move(*val));
+	auto next = &link->next;
+	*chain = std::move(link);
+	chain = next;
+}
+
+Node::Opt Parser::parse_list() {
+	Node::Opt out;
+	Node::Opt *chain = &out;
+	while (auto val = parse_term()) {
+		if (out) {
+			connect<List>(chain, std::move(val));
+		} else {
+			out = std::move(val);
 		}
 	}
+	return out;
+}
 
-	Token last = in.take();
-	if (last.type != Token::eof) {
-		err.report(last.loc, "Unexpected input token");
+Node::Opt Parser::parse_commas() {
+	Node::Opt out;
+	Node::Opt *chain = &out;
+	while (in.good()) {
+		auto list = parse_list();
+		if (in.match(Token::comma)) {
+			connect<Comma>(chain, std::move(list));
+		} else {
+			*chain = std::move(list);
+			break;
+		}
 	}
+	return out;
+}
 
-	source::Location end = items.empty()? begin: items.back()->loc.end;
-	return Root::make(source::Range(begin, end), std::move(items));
+Node::Opt Parser::parse_semicolons() {
+	Node::Opt out;
+	Node::Opt *chain = &out;
+	while (in.good()) {
+		auto commas = parse_commas();
+		if (in.match(Token::semicolon)) {
+			connect<Semicolon>(chain, std::move(commas));
+		} else {
+			*chain = std::move(commas);
+			break;
+		}
+	}
+	return out;
+}
+
+Node::Opt Parser::parse_exp() {
+	return parse_semicolons();
+}
+
+template<typename T>
+cst::Node::Opt Parser::parse_group(lexer::Token tk, int endch) {
+	auto begin = tk.loc;
+	in.next();
+	auto body = parse_exp();
+	tk = in.peek();
+	if (endch == tk.type) {
+		in.next();
+	} else {
+		err.report(tk.loc, "Expected '" + std::string(1, endch) + "' here");
+	}
+	return std::make_unique<T>(begin + tk.loc, std::move(body));
+}
+
+Node::Opt Parser::parse_parens(Token tk) {
+	return parse_group<Parens>(tk, ')');
+}
+
+Node::Opt Parser::parse_brackets(Token tk) {
+	return parse_group<Brackets>(tk, ']');
+}
+
+Node::Opt Parser::parse_braces(Token tk) {
+	return parse_group<Braces>(tk, '}');
+}
+
+Node::Opt Parser::parse() {
+	auto out = parse_exp();
+	lexer::Token tk = in.take();
+	if (tk.type != lexer::Token::eof) {
+		err.report(tk.loc, "Unexpected token at end of file");
+	}
+	return out;
 }
 
 } // namespace parser

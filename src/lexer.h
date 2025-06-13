@@ -18,9 +18,8 @@ struct Token {
 		eof = 0,
 		ident = -1,
 		number = -2,
-		OPTIONAL = -3,
-		SCHEMA = -4,
-		TABLE = -5,
+		comma = ',',
+		semicolon = ';',
 	} type;
 	source::Range loc;
 };

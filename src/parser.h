@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ast.h"
+#include "cst.h"
 #include "error.h"
 #include "lexer.h"
 
@@ -15,8 +15,20 @@ namespace parser {
 class Parser {
 public:
 	Parser(lexer::Lexer &in, error::Reporter &err);
-	ast::Root::Ptr parse();
+	cst::Node::Opt parse();
 private:
+	cst::Node::Opt parse_term();
+	template<typename T>
+	void connect(cst::Node::Opt* &chain, cst::Node::Opt val);
+	cst::Node::Opt parse_list();
+	cst::Node::Opt parse_commas();
+	cst::Node::Opt parse_semicolons();
+	cst::Node::Opt parse_exp();
+	template<typename T>
+	cst::Node::Opt parse_group(lexer::Token, int endch);
+	cst::Node::Opt parse_parens(lexer::Token);
+	cst::Node::Opt parse_brackets(lexer::Token);
+	cst::Node::Opt parse_braces(lexer::Token);
 	lexer::Lexer &in;
 	error::Reporter &err;
 };

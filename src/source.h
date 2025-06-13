@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <cstdint>
 #include <string>
 #include <utility>
@@ -13,9 +14,7 @@
 
 namespace source {
 
-struct Location {
-	uint32_t offset = 0;
-};
+using Location = uint32_t;
 
 struct Range {
 	Range() = default;
@@ -24,6 +23,7 @@ struct Range {
 	Location begin {};
 	Location end {};
 };
+Range operator+(Range a, Range b);
 
 struct File {
 	std::string get(Range);
@@ -42,7 +42,7 @@ public:
 	char take() { return eof() ? (pad++, 0) : *pos++; }
 	bool match(int ch) { return (ch == peek())? (next(), true): false; }
 	void back() { if (pad) pad--; else pos--; }
-	Location loc() const { return Location{.offset = unsigned(pos - buf)}; }
+	Location loc() const { return Location(pos - buf); }
 
 private:
 	std::vector<char>::const_iterator buf;

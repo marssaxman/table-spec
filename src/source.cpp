@@ -10,6 +10,12 @@
 
 namespace source {
 
+Range operator+(Range a, Range b) {
+	auto begin = std::min(a.begin, b.begin);
+	auto end = std::max(a.end, b.end);
+	return Range(begin, end);
+}
+
 std::string File::get(Range loc) {
 	// TODO: return the given range of bytes as a string
 	return std::string();
