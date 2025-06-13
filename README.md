@@ -8,8 +8,9 @@ This is an experiment in its early stages.
 
 Wouldn't it be convenient if one could declare relational data structures
 inside one's C++ programs? I often find myself building little ad-hoc databases
-out of simple structs and standard containers. I'd like the machine to generate
-all the busywork necessary for efficient access and consistent state.
+out of simple structs and standard containers. Instead of doing this by hand,
+I'd like to use a tool which would generate all the busywork necessary for
+efficient access and consistent state.
 
 While it might be possible using some kind of nested template wizardry, that
 doesn't sound like any fun to write or maintain. Instead, following the example
