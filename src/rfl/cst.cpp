@@ -4,8 +4,9 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "cst.h"
+#include "rfl/cst.h"
 
+namespace rfl {
 namespace cst {
 
 List::List(Node::Ptr value):
@@ -16,11 +17,18 @@ Leaf::Leaf(Kind kind, Loc loc):
 	Node(kind),
 	loc(loc) {}
 
+Keyword::Keyword(Loc loc, int id):
+	Leaf(Kind::Keyword, loc),
+	id(id) {}
+
 Ident::Ident(Loc loc):
 	Leaf(Kind::Ident, loc) {}
 
 Number::Number(Loc loc):
 	Leaf(Kind::Number, loc) {}
+
+Symbol::Symbol(Loc loc, int ch):
+	Leaf(Kind::Symbol, loc), ch(ch) {}
 
 Semicolon::Semicolon(Node::Opt value):
 	Node(Kind::Semicolon),
@@ -29,9 +37,6 @@ Semicolon::Semicolon(Node::Opt value):
 Comma::Comma(Node::Opt value):
 	Node(Kind::Comma),
 	value(std::move(value)) {}
-
-Operator::Operator(Loc loc, int ch):
-	Leaf(Kind::Operator, loc), ch(ch) {}
 
 Group::Group(Kind kind, Loc loc, Opt body):
 	Node(kind),
@@ -48,3 +53,4 @@ Braces::Braces(Loc loc, Opt body):
 	Group(Kind::Braces, loc, std::move(body)) {}
 
 } // namespace cst
+} // namespace rfl

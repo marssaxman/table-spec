@@ -6,15 +6,16 @@
 
 #include <iostream>
 
-#include "lexer.h"
-#include "parser.h"
+#include "rfl/lexer.h"
+#include "rfl/parser.h"
 
+namespace rfl {
 namespace parser {
 
 using lexer::Token;
 using namespace cst;
 
-Parser::Parser(lexer::Lexer &in, error::Reporter &err):
+Parser::Parser(lexer::Lexer &in, Reporter &err):
 	in(in),
 	err(err) {}
 
@@ -42,7 +43,7 @@ Node::Opt Parser::parse_term() {
 			out = std::make_unique<Number>(tk.loc);
 			break;
 		default:
-			out = std::make_unique<Operator>(tk.loc, tk.type);
+			out = std::make_unique<Symbol>(tk.loc, tk.type);
 	}
 	if (out.has_value()) {
 		in.next();
@@ -141,3 +142,4 @@ Node::Opt Parser::parse() {
 }
 
 } // namespace parser
+} // namespace rfl

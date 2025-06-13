@@ -8,19 +8,17 @@
 
 #include <string>
 
-#include "source.h"
+#include "file.h"
+#include "rfl/reporter.h"
 
-namespace error {
-
-class Reporter {
+class Reporter : public rfl::Reporter {
 public:
-	Reporter(source::File &file);
-	void report(source::Location loc, const std::string &message);
-	void report(source::Range loc, const std::string &message);
+	Reporter(File &file);
+	void report(rfl::source::Location loc, const std::string &) override;
+	void report(rfl::source::Range loc, const std::string &) override;
 	bool any() const { return failed; }
 protected:
-	source::File &file;
+	File &file;
 	bool failed = false;
 };
 
-} // namespace error

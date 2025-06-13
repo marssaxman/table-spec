@@ -6,8 +6,9 @@
 
 #include <iostream>
 
-#include "source.h"
+#include "rfl/source.h"
 
+namespace rfl {
 namespace source {
 
 Range operator+(Range a, Range b) {
@@ -16,19 +17,14 @@ Range operator+(Range a, Range b) {
 	return Range(begin, end);
 }
 
-std::string File::get(Range loc) {
-	// TODO: return the given range of bytes as a string
-	return std::string();
-}
-
-std::pair<unsigned, unsigned> File::line_and_column(Location loc) {
-	// TODO: compute line number and column offset
-	return std::pair<unsigned, unsigned>();
-}
-
 Reader::Reader(const std::vector<char> &buffer):
 	buf(buffer.begin()),
 	pos(buffer.begin()),
 	end(buffer.end()) {}
 
+std::string Reader::get(Range r) {
+	return std::string(buf + r.begin, buf + r.end);
+}
+
 } // namespace source
+} // namespace rfl

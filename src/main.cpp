@@ -10,11 +10,10 @@
 #include <vector>
 
 #include "error.h"
-#include "lexer.h"
-#include "parser.h"
-#include "source.h"
+#include "file.h"
+#include "rfl/rfl.h"
 
-int read(const std::string &path, source::File &out) {
+int read(const std::string &path, File &out) {
 	std::ifstream file(path, std::ios::binary | std::ios::ate);
 	std::streamsize size = file.tellg();
 	file.seekg(0, std::ios::beg);
@@ -35,14 +34,17 @@ int read(const std::string &path, source::File &out) {
 }
 
 int compile(const std::string &path) {
-	source::File file;
+	File file;
 	if (read(path, file)) return EXIT_FAILURE;
 
-	error::Reporter err(file);
-	source::Reader r(file.buffer);
-	lexer::Lexer l(r, err);
-	parser::Parser p(l, err);
-	auto root = p.parse();
+	Reporter err(file);
+	rfl::Config config;
+	config.keywords = {
+		"schema",
+		"table",
+	};
+	rfl::Frontend frontend(config);
+	auto root = frontend.run(file.buffer, err);
 
 	return err.any() ? EXIT_FAILURE: EXIT_SUCCESS;
 }

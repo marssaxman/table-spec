@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 
+namespace rfl {
 namespace source {
 
 using Location = uint32_t;
@@ -22,15 +23,9 @@ struct Range {
 	Range(Location b, Location e): begin(b), end(e) {}
 	Location begin {};
 	Location end {};
+	bool good() const { return end > begin; }
 };
 Range operator+(Range a, Range b);
-
-struct File {
-	std::string get(Range);
-	std::pair<unsigned, unsigned> line_and_column(Location);
-	std::string path;
-	std::vector<char> buffer;
-};
 
 class Reader {
 public:
@@ -43,6 +38,7 @@ public:
 	bool match(int ch) { return (ch == peek())? (next(), true): false; }
 	void back() { if (pad) pad--; else pos--; }
 	Location loc() const { return Location(pos - buf); }
+	std::string get(Range);
 
 private:
 	std::vector<char>::const_iterator buf;
@@ -52,3 +48,4 @@ private:
 };
 
 } // namespace source
+} // namespace rfl

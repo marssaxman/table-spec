@@ -9,19 +9,12 @@
 #include <string>
 #include <vector>
 
-namespace ast {
+#include "rfl/source.h"
 
-struct column {
-	std::string name;
-	std::string type;
+struct File {
+	std::string get(rfl::source::Range);
+	std::pair<unsigned, unsigned> line_and_column(rfl::source::Location);
+	std::string path;
+	std::vector<char> buffer;
 };
 
-struct table {
-	std::vector<column> columns;
-};
-
-struct schema {
-	std::vector<table> tables;
-};
-
-} // namespace ast

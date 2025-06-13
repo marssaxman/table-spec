@@ -6,11 +6,12 @@
 
 #include <cctype>
 
-#include "lexer.h"
+#include "rfl/lexer.h"
 
+namespace rfl {
 namespace lexer {
 
-Lexer::Lexer(source::Reader &in, error::Reporter &err):
+Lexer::Lexer(source::Reader &in, Reporter &err):
 	in(in),
 	err(err) {}
 
@@ -114,3 +115,4 @@ Token Lexer::tok(Token::Type type, source::Location begin) {
 }
 
 } // namespace lexer
+} // namespace rfl

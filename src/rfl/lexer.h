@@ -6,11 +6,14 @@
 
 #pragma once
 
+#include <map>
 #include <optional>
+#include <vector>
 
-#include "error.h"
-#include "source.h"
+#include "rfl/reporter.h"
+#include "rfl/source.h"
 
+namespace rfl {
 namespace lexer {
 
 struct Token {
@@ -26,7 +29,7 @@ struct Token {
 
 class Lexer {
 public:
-	Lexer(source::Reader&, error::Reporter&);
+	Lexer(source::Reader&, Reporter&);
 	bool eof() const { return in.eof(); }
 	bool good() const { return in.good(); }
 	Token peek();
@@ -45,9 +48,10 @@ private:
 	Token tok(Token::Type type, source::Location begin);
 
 	source::Reader &in;
-	error::Reporter &err;
+	Reporter &err;
 
 	std::optional<source::Reader> forward;
 };
 
 } // namespace lexer
+} // namespace rfl

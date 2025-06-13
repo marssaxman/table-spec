@@ -8,19 +8,16 @@
 
 #include "error.h"
 
-namespace error {
-
-Reporter::Reporter(source::File &file):
+Reporter::Reporter(File &file):
 	file(file) {}
 
-void Reporter::report(source::Location loc, const std::string &message) {
+void Reporter::report(rfl::source::Location loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
 	failed = true;
 }
 
-void Reporter::report(source::Range loc, const std::string &message) {
+void Reporter::report(rfl::source::Range loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
 	failed = true;
 }
 
-} // namespace error

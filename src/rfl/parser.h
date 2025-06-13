@@ -6,15 +6,16 @@
 
 #pragma once
 
-#include "cst.h"
-#include "error.h"
-#include "lexer.h"
+#include "rfl/cst.h"
+#include "rfl/reporter.h"
+#include "rfl/lexer.h"
 
+namespace rfl {
 namespace parser {
 
 class Parser {
 public:
-	Parser(lexer::Lexer &in, error::Reporter &err);
+	Parser(lexer::Lexer &in, Reporter &err);
 	cst::Node::Opt parse();
 private:
 	cst::Node::Opt parse_term();
@@ -28,7 +29,8 @@ private:
 	cst::Node::Opt parse_brackets(lexer::Token);
 	cst::Node::Opt parse_braces(lexer::Token);
 	lexer::Lexer &in;
-	error::Reporter &err;
+	Reporter &err;
 };
 
 } // namespace parser
+} // namespace rfl
