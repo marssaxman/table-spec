@@ -22,6 +22,8 @@ clean:
 	-rm -rf bin
 install:
 	cp $(TARGET) /usr/bin/$(EXECNAME)
-.PHONY: clean install
+format:
+	clang-format -i $(shell find src -name *.c -o -name *.cpp -o -name *.h)
+.PHONY: clean install format
 -include $(shell find bin -name *.d)
 
