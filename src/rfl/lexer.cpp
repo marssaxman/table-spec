@@ -11,9 +11,7 @@
 namespace rfl {
 namespace lexer {
 
-Lexer::Lexer(source::Reader &in, Reporter &err):
-	in(in),
-	err(err) {}
+Lexer::Lexer(source::Reader &in, Reporter &err) : in(in), err(err) {}
 
 Token Lexer::peek() {
 	auto start = in;
@@ -33,21 +31,24 @@ void Lexer::next() {
 }
 
 Token Lexer::take() {
-	if (in.eof()) return tok(Token::eof, in.loc());
+	if (in.eof())
+		return tok(Token::eof, in.loc());
 	begin_token();
 	source::Location begin = in.loc();
 	int ch = in.take();
-	if (isalpha(ch)) return ident(begin);
-	if (isdigit(ch)) return number(begin);
+	if (isalpha(ch))
+		return ident(begin);
+	if (isdigit(ch))
+		return number(begin);
 	return tok(Token::Type(ch), begin);
 }
 
 bool Lexer::match(Token::Type tk) {
-	return (tk == peek().type)? next(), true: false;
+	return (tk == peek().type) ? next(), true : false;
 }
 
 Token Lexer::ident(source::Location begin) {
-	int ch {};
+	int ch{};
 	do {
 		ch = in.take();
 	} while (isalnum(ch) || '_' == ch);
@@ -56,7 +57,7 @@ Token Lexer::ident(source::Location begin) {
 }
 
 Token Lexer::number(source::Location begin) {
-	int ch {};
+	int ch{};
 	do {
 		ch = in.take();
 	} while (isalnum(ch) || '.' == ch);
@@ -69,7 +70,8 @@ void Lexer::error(const source::Location &loc, const std::string &message) {
 }
 
 void Lexer::begin_token() {
-	while (in.good() && (skip_spaces() || skip_comments()));
+	while (in.good() && (skip_spaces() || skip_comments()))
+		;
 }
 
 bool Lexer::skip_spaces() {
@@ -97,14 +99,17 @@ bool Lexer::skip_comments() {
 }
 
 void Lexer::line_comment() {
-	for (int ch = in.take(); ch != '\n' && in.good(); ch = in.take());
+	for (int ch = in.take(); ch != '\n' && in.good(); ch = in.take())
+		;
 }
 
 void Lexer::block_comment() {
 	auto begin = in.loc();
 	for (int ch = in.take(); in.good(); ch = in.take()) {
-		if (ch == '*' && in.match('/')) return;
-		if (ch == '/' && in.match('*')) block_comment();
+		if (ch == '*' && in.match('/'))
+			return;
+		if (ch == '/' && in.match('*'))
+			block_comment();
 	}
 	error(begin, "non-terminated block comment");
 }

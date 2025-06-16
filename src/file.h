@@ -17,4 +17,3 @@ struct File {
 	std::string path;
 	std::vector<char> buffer;
 };
-

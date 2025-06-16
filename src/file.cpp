@@ -17,4 +17,3 @@ std::pair<unsigned, unsigned> File::line_and_column(rfl::source::Location loc) {
 	// TODO: compute line number and column offset
 	return std::pair<unsigned, unsigned>();
 }
-

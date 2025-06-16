@@ -8,8 +8,7 @@
 
 #include "error.h"
 
-Reporter::Reporter(File &file):
-	file(file) {}
+Reporter::Reporter(File &file) : file(file) {}
 
 void Reporter::report(rfl::source::Location loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
@@ -20,4 +19,3 @@ void Reporter::report(rfl::source::Range loc, const std::string &message) {
 	std::cerr << file.path << ": " << message << std::endl;
 	failed = true;
 }
-

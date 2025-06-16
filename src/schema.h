@@ -39,4 +39,3 @@ struct Schema {
 };
 
 } // namespace schema
-

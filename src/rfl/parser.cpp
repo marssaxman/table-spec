@@ -15,13 +15,9 @@ namespace parser {
 using lexer::Token;
 using namespace cst;
 
-Parser::Parser(
-		lexer::Lexer &in,
-		Reporter &err,
-		const std::map<std::string, unsigned> &keywords):
-	in(in),
-	err(err),
-	keywords(keywords) {}
+Parser::Parser(lexer::Lexer &in, Reporter &err,
+               const std::map<std::string, unsigned> &keywords)
+    : in(in), err(err), keywords(keywords) {}
 
 Node::Opt Parser::parse_ident(lexer::Token tk) {
 	std::string value = in.get(tk.loc);
@@ -37,26 +33,26 @@ Node::Opt Parser::parse_term() {
 	Node::Opt out;
 	auto tk = in.peek();
 	switch ((int)tk.type) {
-		case Token::eof:
-		case ')':
-		case ']':
-		case '}':
-		case ';':
-		case ',':
-			break;
-		case '(':
-			return parse_parens(tk);
-		case '[':
-			return parse_brackets(tk);
-		case '{':
-			return parse_braces(tk);
-		case Token::ident:
-			return parse_ident(tk);
-		case Token::number:
-			out = std::make_unique<Number>(tk.loc);
-			break;
-		default:
-			out = std::make_unique<Symbol>(tk.loc, tk.type);
+	case Token::eof:
+	case ')':
+	case ']':
+	case '}':
+	case ';':
+	case ',':
+		break;
+	case '(':
+		return parse_parens(tk);
+	case '[':
+		return parse_brackets(tk);
+	case '{':
+		return parse_braces(tk);
+	case Token::ident:
+		return parse_ident(tk);
+	case Token::number:
+		out = std::make_unique<Number>(tk.loc);
+		break;
+	default:
+		out = std::make_unique<Symbol>(tk.loc, tk.type);
 	}
 	if (out.has_value()) {
 		in.next();
@@ -115,11 +111,9 @@ Node::Opt Parser::parse_semicolons() {
 	return out;
 }
 
-Node::Opt Parser::parse_exp() {
-	return parse_semicolons();
-}
+Node::Opt Parser::parse_exp() { return parse_semicolons(); }
 
-template<typename T>
+template <typename T>
 cst::Node::Opt Parser::parse_group(lexer::Token tk, int endch) {
 	auto begin = tk.loc;
 	in.next();

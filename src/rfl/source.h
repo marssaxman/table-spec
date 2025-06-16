@@ -19,10 +19,10 @@ using Location = uint32_t;
 
 struct Range {
 	Range() = default;
-	Range(Location x): begin(x), end(x) {}
-	Range(Location b, Location e): begin(b), end(e) {}
-	Location begin {};
-	Location end {};
+	Range(Location x) : begin(x), end(x) {}
+	Range(Location b, Location e) : begin(b), end(e) {}
+	Location begin{};
+	Location end{};
 	bool good() const { return end > begin; }
 };
 Range operator+(Range a, Range b);
@@ -35,8 +35,8 @@ public:
 	char peek() const { return eof() ? 0 : *pos; }
 	void next() { eof() ? (void)pad++ : (void)pos++; }
 	char take() { return eof() ? (pad++, 0) : *pos++; }
-	bool match(int ch) { return (ch == peek())? (next(), true): false; }
-	void back() { if (pad) pad--; else pos--; }
+	bool match(int ch) { return (ch == peek()) ? (next(), true) : false; }
+	void back() { pad ? pad-- : pos--; }
 	Location loc() const { return Location(pos - buf); }
 	std::string get(Range);
 

@@ -23,6 +23,7 @@ struct Config {
 struct Frontend {
 	Frontend(const Config &);
 	cst::Node::Opt run(const std::vector<char> &source, Reporter &err);
+
 private:
 	Config config;
 	std::map<std::string, unsigned> keywords;

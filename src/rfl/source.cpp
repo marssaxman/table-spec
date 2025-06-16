@@ -17,10 +17,8 @@ Range operator+(Range a, Range b) {
 	return Range(begin, end);
 }
 
-Reader::Reader(const std::vector<char> &buffer):
-	buf(buffer.begin()),
-	pos(buffer.begin()),
-	end(buffer.end()) {}
+Reader::Reader(const std::vector<char> &buffer)
+    : buf(buffer.begin()), pos(buffer.begin()), end(buffer.end()) {}
 
 std::string Reader::get(Range r) {
 	return std::string(buf + r.begin, buf + r.end);

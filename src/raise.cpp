@@ -12,23 +12,24 @@ class Engine {
 public:
 	Engine(Reporter &err);
 	std::vector<schema::Schema> schemas;
-	void run(cst::Node*);
+	void run(cst::Node *);
+
 protected:
-	cst::Node* parse_schema(cst::Node*);
+	cst::Node *parse_schema(cst::Node *);
+
 private:
 	Reporter &err;
 };
 
-Engine::Engine(Reporter &err):
-	err(err) {}
+Engine::Engine(Reporter &err) : err(err) {}
 
-void Engine::run(cst::Node* n) {
+void Engine::run(cst::Node *n) {
 	while (n) {
 		n = parse_schema(n);
 	}
 }
 
-cst::Node* Engine::parse_schema(cst::Node*) {
+cst::Node *Engine::parse_schema(cst::Node *) {
 	// TODO
 	return nullptr;
 }

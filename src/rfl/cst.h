@@ -32,6 +32,7 @@ struct Node {
 	} kind;
 	using Ptr = std::unique_ptr<Node>;
 	using Opt = std::optional<Ptr>;
+
 protected:
 	Node(Kind kind) : kind(kind) {}
 };
@@ -47,6 +48,7 @@ struct List : public Node {
 struct Leaf : public Node {
 protected:
 	Leaf(Kind, Loc);
+
 public:
 	const Loc loc;
 };
@@ -91,6 +93,7 @@ struct Comma : public Node {
 struct Group : public Node {
 protected:
 	Group(Kind, Loc, Opt body);
+
 public:
 	const Loc loc;
 	Opt body;

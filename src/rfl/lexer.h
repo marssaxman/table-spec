@@ -28,7 +28,7 @@ struct Token {
 
 class Lexer {
 public:
-	Lexer(source::Reader&, Reporter&);
+	Lexer(source::Reader &, Reporter &);
 	bool eof() const { return in.eof(); }
 	bool good() const { return in.good(); }
 	Token peek();
@@ -36,10 +36,11 @@ public:
 	Token take();
 	bool match(Token::Type);
 	std::string get(source::Range loc) { return in.get(loc); }
+
 private:
 	Token ident(source::Location begin);
 	Token number(source::Location begin);
-	void error(const source::Location&, const std::string&);
+	void error(const source::Location &, const std::string &);
 	void begin_token();
 	bool skip_spaces();
 	bool skip_comments();

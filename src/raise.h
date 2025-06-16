@@ -13,4 +13,3 @@
 #include "schema.h"
 
 std::vector<schema::Schema> raise(rfl::cst::Node::Ptr, rfl::Reporter &err);
-

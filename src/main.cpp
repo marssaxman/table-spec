@@ -4,9 +4,10 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+#include <stdlib.h>
+
 #include <fstream>
 #include <iostream>
-#include <stdlib.h>
 #include <vector>
 
 #include "error.h"
@@ -35,22 +36,22 @@ int read(const std::string &path, File &out) {
 
 int compile(const std::string &path) {
 	File file;
-	if (read(path, file)) return EXIT_FAILURE;
+	if (read(path, file))
+		return EXIT_FAILURE;
 
 	Reporter err(file);
 	rfl::Config config;
 	config.keywords = {
-		"schema",
-		"table",
+	    "schema",
+	    "table",
 	};
 	rfl::Frontend frontend(config);
 	auto root = frontend.run(file.buffer, err);
 
-	return err.any() ? EXIT_FAILURE: EXIT_SUCCESS;
+	return err.any() ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-int main(int argc, const char *argv[])
-{
+int main(int argc, const char *argv[]) {
 	if (argc <= 1) {
 		std::cerr << argv[0] << ": no input files" << std::endl;
 		return EXIT_FAILURE;
@@ -59,5 +60,5 @@ int main(int argc, const char *argv[])
 	for (int i = 1; i < argc; ++i) {
 		fail |= compile(argv[i]) != EXIT_SUCCESS;
 	}
-	return fail? EXIT_FAILURE: EXIT_SUCCESS;
+	return fail ? EXIT_FAILURE : EXIT_SUCCESS;
 }

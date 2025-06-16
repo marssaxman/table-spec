@@ -17,8 +17,8 @@ public:
 	void report(rfl::source::Location loc, const std::string &) override;
 	void report(rfl::source::Range loc, const std::string &) override;
 	bool any() const { return failed; }
+
 protected:
 	File &file;
 	bool failed = false;
 };
-
