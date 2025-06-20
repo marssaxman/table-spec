@@ -34,7 +34,7 @@ cst::Node *Engine::parse_schema(cst::Node *) {
 	return nullptr;
 }
 
-std::vector<schema::Schema> raise(cst::Node::Ptr root, Reporter &err) {
+std::vector<schema::Schema> lift(cst::Node::Ptr root, Reporter &err) {
 	Engine engine(err);
 	engine.run(root.get());
 	return engine.schemas;

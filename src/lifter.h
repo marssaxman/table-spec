@@ -12,4 +12,4 @@
 #include "rfl/reporter.h"
 #include "schema.h"
 
-std::vector<schema::Schema> raise(rfl::cst::Node::Ptr, rfl::Reporter &err);
+std::vector<schema::Schema> lift(rfl::cst::Node::Ptr, rfl::Reporter &err);
