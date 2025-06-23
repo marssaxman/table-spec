@@ -4,16 +4,31 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+#include <cassert>
 #include <string>
 
 #include "file.h"
 
 std::string File::get(rfl::source::Range loc) {
-	// TODO: return the given range of bytes as a string
-	return std::string();
+	assert(loc.begin < buffer.size() && loc.end <= buffer.size());
+	return std::string(buffer.begin() + loc.begin, buffer.begin() + loc.end);
 }
 
 std::pair<unsigned, unsigned> File::line_and_column(rfl::source::Location loc) {
-	// TODO: compute line number and column offset
+	unsigned line = 1;
+	unsigned column = 0;
+	unsigned size = buffer.size();
+	for (unsigned i = 0; i < size; ++i) {
+		if (i == loc) {
+			return std::make_pair(line, column);
+		}
+		char ch = buffer[i];
+		if ('\n' == ch) {
+			line++;
+			column = 0;
+		} else {
+			column++;
+		}
+	}
 	return std::pair<unsigned, unsigned>();
 }
