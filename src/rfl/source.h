@@ -36,7 +36,7 @@ public:
 	void next() { eof() ? (void)pad++ : (void)pos++; }
 	char take() { return eof() ? (pad++, 0) : *pos++; }
 	bool match(int ch) { return (ch == peek()) ? (next(), true) : false; }
-	void back() { pad ? pad-- : pos--; }
+	void back() { pad ? (void)pad-- : (void)pos--; }
 	Location loc() const { return Location(pos - buf); }
 	std::string get(Range);
 

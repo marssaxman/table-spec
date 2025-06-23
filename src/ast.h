@@ -10,7 +10,35 @@
 #include <string>
 #include <vector>
 
+/*
+
+block decl: type, name, contents
+
+column decl: name, type, opt-value
+
+expression: term opt-subscript
+
+subscript: '(' expression-list ')'
+
+*/
+
+
+
 namespace ast {
+
+class BlockDecl {
+	BlockDecl() = default;
+public:
+	virtual ~BlockDecl() = default;
+	const enum Kind {
+		Schema,
+		Table,
+	};
+	using Ptr = std::unique_ptr<Node>;
+	using Opt = std::optional<Ptr>;
+	using Vec = std::vector<Ptr>;
+};
+
 
 struct Node {
 	virtual ~Node() = default;
@@ -50,7 +78,7 @@ struct Subscript : public Expression {
 struct Column : public Node {
 	std::string name;
 	Expression::Ptr type;
-	Expressin::Opt value;
+	Expression::Opt value;
 };
 
 struct Table : public Node {
@@ -65,6 +93,5 @@ struct Schema : public Node {
 
 struct Root : public Node {
 	Schema::Vec schemas;
-};
 
 } // namespace ast
