@@ -35,15 +35,17 @@ Node::Opt Parser::parse_ident(lexer::Token tk) {
 
 Node::Opt Parser::parse_term() {
 	Node::Opt out;
-	auto tk = in.peek();
-	switch ((int)tk.type) {
+	switch ((int)in.peek().type) {
 	case Token::eof:
 	case ')':
 	case ']':
 	case '}':
 	case ';':
 	case ',':
-		break;
+		return out;
+	}
+	auto tk = in.take();
+	switch ((int)tk.type) {
 	case '(':
 		return parse_parens(tk);
 	case '[':
