@@ -6,20 +6,15 @@
 
 #pragma once
 
-#include <map>
-#include <string>
+#include "cst.h"
+#include "lexer.h"
+#include "error.h"
 
-#include "rfl/cst.h"
-#include "rfl/lexer.h"
-#include "rfl/reporter.h"
-
-namespace rfl {
 namespace parser {
 
 class Parser {
 public:
-	Parser(lexer::Lexer &in, Reporter &err,
-	       const std::map<std::string, unsigned> &keywords);
+	Parser(lexer::Lexer &in, Reporter &err);
 	cst::Node::Opt parse();
 
 private:
@@ -35,8 +30,7 @@ private:
 	cst::Node::Opt parse_braces(lexer::Token);
 	lexer::Lexer &in;
 	Reporter &err;
-	const std::map<std::string, unsigned> &keywords;
 };
 
 } // namespace parser
-} // namespace rfl
+

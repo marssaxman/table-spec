@@ -10,7 +10,7 @@
 
 Reporter::Reporter(File &file) : file(file) {}
 
-void Reporter::report(rfl::source::Location loc, const std::string &message) {
+void Reporter::report(source::Location loc, const std::string &message) {
 	auto lac = file.line_and_column(loc);
 	std::cerr << file.path << ":";
 	std::cerr << lac.first << ":" << lac.second;
@@ -18,7 +18,7 @@ void Reporter::report(rfl::source::Location loc, const std::string &message) {
 	failed = true;
 }
 
-void Reporter::report(rfl::source::Range loc, const std::string &message) {
+void Reporter::report(source::Range loc, const std::string &message) {
 	auto lac_begin = file.line_and_column(loc.begin);
 	auto lac_end = file.line_and_column(loc.end);
 	std::cerr << file.path << ":";

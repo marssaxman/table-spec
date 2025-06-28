@@ -9,9 +9,8 @@
 #include <memory>
 #include <optional>
 
-#include "rfl/source.h"
+#include "source.h"
 
-namespace rfl {
 namespace cst {
 
 using Loc = source::Range;
@@ -112,4 +111,4 @@ struct Braces : public Group {
 };
 
 } // namespace cst
-} // namespace rfl
+

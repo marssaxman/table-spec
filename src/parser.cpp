@@ -4,23 +4,27 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include <iostream>
+#include <unordered_map>
 
-#include "rfl/lexer.h"
-#include "rfl/parser.h"
+#include "lexer.h"
+#include "parser.h"
 
-namespace rfl {
 namespace parser {
 
 using lexer::Token;
 using namespace cst;
 
-Parser::Parser(lexer::Lexer &in, Reporter &err,
-               const std::map<std::string, unsigned> &keywords)
-    : in(in), err(err), keywords(keywords) {}
+Parser::Parser(lexer::Lexer &in, Reporter &err)
+    : in(in), err(err) {}
 
 Node::Opt Parser::parse_ident(lexer::Token tk) {
 	std::string value = in.get(tk.loc);
+	static const std::unordered_map<std::string, Token::Type> keywords{
+        {"proc", Token::proc},
+        {"query", Token::query},
+        {"schema", Token::schema},
+        {"table", Token::table},
+    };
 	auto iter = keywords.find(value);
 	if (iter != keywords.end()) {
 		return std::make_unique<Keyword>(tk.loc, iter->second);
@@ -149,4 +153,4 @@ Node::Opt Parser::parse() {
 }
 
 } // namespace parser
-} // namespace rfl
+

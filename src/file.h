@@ -9,11 +9,11 @@
 #include <string>
 #include <vector>
 
-#include "rfl/source.h"
+#include "source.h"
 
 struct File {
-	std::string get(rfl::source::Range);
-	std::pair<unsigned, unsigned> line_and_column(rfl::source::Location);
+	std::string get(source::Range);
+	std::pair<unsigned, unsigned> line_and_column(source::Location);
 	std::string path;
 	std::vector<char> buffer;
 };

@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-namespace rfl {
 namespace source {
 
 using Location = uint32_t;
@@ -48,4 +47,4 @@ private:
 };
 
 } // namespace source
-} // namespace rfl
+

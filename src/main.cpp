@@ -12,7 +12,9 @@
 
 #include "error.h"
 #include "file.h"
-#include "rfl/rfl.h"
+#include "source.h"
+#include "lexer.h"
+#include "parser.h"
 
 int read(const std::string &path, File &out) {
 	std::ifstream file(path, std::ios::binary | std::ios::ate);
@@ -38,15 +40,15 @@ int compile(const std::string &path) {
 	File file;
 	if (read(path, file))
 		return EXIT_FAILURE;
-
 	Reporter err(file);
-	rfl::Config config;
-	config.keywords = {
-	    "schema",
-	    "table",
-	};
-	rfl::Frontend frontend(config);
-	auto root = frontend.run(file.buffer, err);
+
+	source::Reader r(file.buffer);
+	lexer::Lexer l(r, err);
+	parser::Parser p(l, err);
+	auto root = p.parse();
+
+	if (root) {
+	}
 
 	return err.any() ? EXIT_FAILURE : EXIT_SUCCESS;
 }

@@ -9,10 +9,9 @@
 #include <optional>
 #include <vector>
 
-#include "rfl/reporter.h"
-#include "rfl/source.h"
+#include "error.h"
+#include "source.h"
 
-namespace rfl {
 namespace lexer {
 
 struct Token {
@@ -20,6 +19,10 @@ struct Token {
 		eof = 0,
 		ident = -1,
 		number = -2,
+		proc = -3,
+		query = -4,
+		schema = -5,
+		table = -6,
 		comma = ',',
 		semicolon = ';',
 	} type;
@@ -55,4 +58,4 @@ private:
 };
 
 } // namespace lexer
-} // namespace rfl
+

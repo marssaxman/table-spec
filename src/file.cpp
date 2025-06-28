@@ -9,12 +9,12 @@
 
 #include "file.h"
 
-std::string File::get(rfl::source::Range loc) {
+std::string File::get(source::Range loc) {
 	assert(loc.begin < buffer.size() && loc.end <= buffer.size());
 	return std::string(buffer.begin() + loc.begin, buffer.begin() + loc.end);
 }
 
-std::pair<unsigned, unsigned> File::line_and_column(rfl::source::Location loc) {
+std::pair<unsigned, unsigned> File::line_and_column(source::Location loc) {
 	unsigned line = 1;
 	unsigned column = 0;
 	unsigned size = buffer.size();

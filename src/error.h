@@ -9,13 +9,12 @@
 #include <string>
 
 #include "file.h"
-#include "rfl/reporter.h"
 
-class Reporter : public rfl::Reporter {
+class Reporter {
 public:
 	Reporter(File &file);
-	void report(rfl::source::Location loc, const std::string &) override;
-	void report(rfl::source::Range loc, const std::string &) override;
+	void report(source::Location loc, const std::string &);
+	void report(source::Range loc, const std::string &);
 	bool any() const { return failed; }
 
 protected:

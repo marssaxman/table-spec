@@ -6,9 +6,8 @@
 
 #include <cctype>
 
-#include "rfl/lexer.h"
+#include "lexer.h"
 
-namespace rfl {
 namespace lexer {
 
 Lexer::Lexer(source::Reader &in, Reporter &err) : in(in), err(err) {}
@@ -51,7 +50,7 @@ Token Lexer::ident(source::Location begin) {
 	int ch{};
 	do {
 		ch = in.take();
-	} while (isalnum(ch) || '_' == ch);
+	} while (in.good() && (isalnum(ch) || '_' == ch));
 	in.back();
 	return tok(Token::ident, begin);
 }
@@ -60,7 +59,7 @@ Token Lexer::number(source::Location begin) {
 	int ch{};
 	do {
 		ch = in.take();
-	} while (isalnum(ch) || '.' == ch);
+	} while (in.good() && (isalnum(ch) || '.' == ch));
 	in.back();
 	return tok(Token::number, begin);
 }
@@ -120,4 +119,4 @@ Token Lexer::tok(Token::Type type, source::Location begin) {
 }
 
 } // namespace lexer
-} // namespace rfl
+

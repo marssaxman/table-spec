@@ -6,9 +6,8 @@
 
 #include <iostream>
 
-#include "rfl/source.h"
+#include "source.h"
 
-namespace rfl {
 namespace source {
 
 Range operator+(Range a, Range b) {
@@ -25,4 +24,4 @@ std::string Reader::get(Range r) {
 }
 
 } // namespace source
-} // namespace rfl
+
