@@ -24,4 +24,3 @@ std::string Reader::get(Range r) {
 }
 
 } // namespace source
-

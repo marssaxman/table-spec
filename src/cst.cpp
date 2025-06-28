@@ -36,4 +36,3 @@ Brackets::Brackets(Loc loc, Opt body)
 Braces::Braces(Loc loc, Opt body) : Group(Kind::Braces, loc, std::move(body)) {}
 
 } // namespace cst
-

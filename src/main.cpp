@@ -12,9 +12,9 @@
 
 #include "error.h"
 #include "file.h"
-#include "source.h"
 #include "lexer.h"
 #include "parser.h"
+#include "source.h"
 
 int read(const std::string &path, File &out) {
 	std::ifstream file(path, std::ios::binary | std::ios::ate);

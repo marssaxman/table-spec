@@ -22,12 +22,11 @@ subscript: '(' expression-list ')'
 
 */
 
-
-
 namespace ast {
 
 class BlockDecl {
 	BlockDecl() = default;
+
 public:
 	virtual ~BlockDecl() = default;
 	const enum Kind {
@@ -38,7 +37,6 @@ public:
 	using Opt = std::optional<Ptr>;
 	using Vec = std::vector<Ptr>;
 };
-
 
 struct Node {
 	virtual ~Node() = default;

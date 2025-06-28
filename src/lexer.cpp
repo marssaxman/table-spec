@@ -119,4 +119,3 @@ Token Lexer::tok(Token::Type type, source::Location begin) {
 }
 
 } // namespace lexer
-

@@ -14,17 +14,16 @@ namespace parser {
 using lexer::Token;
 using namespace cst;
 
-Parser::Parser(lexer::Lexer &in, Reporter &err)
-    : in(in), err(err) {}
+Parser::Parser(lexer::Lexer &in, Reporter &err) : in(in), err(err) {}
 
 Node::Opt Parser::parse_ident(lexer::Token tk) {
 	std::string value = in.get(tk.loc);
 	static const std::unordered_map<std::string, Token::Type> keywords{
-        {"proc", Token::proc},
-        {"query", Token::query},
-        {"schema", Token::schema},
-        {"table", Token::table},
-    };
+	    {"proc", Token::proc},
+	    {"query", Token::query},
+	    {"schema", Token::schema},
+	    {"table", Token::table},
+	};
 	auto iter = keywords.find(value);
 	if (iter != keywords.end()) {
 		return std::make_unique<Keyword>(tk.loc, iter->second);
@@ -155,4 +154,3 @@ Node::Opt Parser::parse() {
 }
 
 } // namespace parser
-

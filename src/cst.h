@@ -111,4 +111,3 @@ struct Braces : public Group {
 };
 
 } // namespace cst
-

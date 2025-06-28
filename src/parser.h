@@ -7,8 +7,8 @@
 #pragma once
 
 #include "cst.h"
-#include "lexer.h"
 #include "error.h"
+#include "lexer.h"
 
 namespace parser {
 
@@ -33,4 +33,3 @@ private:
 };
 
 } // namespace parser
-
