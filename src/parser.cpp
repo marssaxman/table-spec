@@ -8,15 +8,13 @@
 
 #include "lexer.h"
 #include "parser.h"
+#include "token.h"
 
-namespace parser {
-
-using lexer::Token;
 using namespace cst;
 
-Parser::Parser(lexer::Lexer &in, Reporter &err) : in(in), err(err) {}
+Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
 
-Node::Opt Parser::parse_ident(lexer::Token tk) {
+Node::Opt Parser::parse_ident(Token tk) {
 	std::string value = in.get(tk.loc);
 	static const std::unordered_map<std::string, Token::Type> keywords{
 	    {"proc", Token::proc},
@@ -119,7 +117,7 @@ Node::Opt Parser::parse_semicolons() {
 Node::Opt Parser::parse_exp() { return parse_semicolons(); }
 
 template <typename T>
-cst::Node::Opt Parser::parse_group(lexer::Token tk, int endch) {
+cst::Node::Opt Parser::parse_group(Token tk, int endch) {
 	auto begin = tk.loc;
 	in.next();
 	auto body = parse_exp();
@@ -146,11 +144,10 @@ Node::Opt Parser::parse_braces(Token tk) {
 
 Node::Opt Parser::parse() {
 	auto out = parse_exp();
-	lexer::Token tk = in.take();
-	if (tk.type != lexer::Token::eof) {
+	Token tk = in.take();
+	if (tk.type != Token::eof) {
 		err.report(tk.loc, "Unexpected token at end of file");
 	}
 	return out;
 }
 
-} // namespace parser

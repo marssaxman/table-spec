@@ -8,28 +8,25 @@
 
 #include "cst.h"
 #include "error.h"
-#include "lexer.h"
-
-namespace parser {
+#include "token.h"
 
 class Parser {
 public:
-	Parser(lexer::Lexer &in, Reporter &err);
+	Parser(Lexer &in, Reporter &err);
 	cst::Node::Opt parse();
 
 private:
-	cst::Node::Opt parse_ident(lexer::Token);
+	cst::Node::Opt parse_ident(Token);
 	cst::Node::Opt parse_term();
 	cst::Node::Opt parse_list();
 	cst::Node::Opt parse_commas();
 	cst::Node::Opt parse_semicolons();
 	cst::Node::Opt parse_exp();
-	template <typename T> cst::Node::Opt parse_group(lexer::Token, int endch);
-	cst::Node::Opt parse_parens(lexer::Token);
-	cst::Node::Opt parse_brackets(lexer::Token);
-	cst::Node::Opt parse_braces(lexer::Token);
-	lexer::Lexer &in;
+	template <typename T> cst::Node::Opt parse_group(Token, int endch);
+	cst::Node::Opt parse_parens(Token);
+	cst::Node::Opt parse_brackets(Token);
+	cst::Node::Opt parse_braces(Token);
+	Lexer &in;
 	Reporter &err;
 };
 
-} // namespace parser

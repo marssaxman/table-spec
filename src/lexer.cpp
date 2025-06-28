@@ -7,10 +7,9 @@
 #include <cctype>
 
 #include "lexer.h"
+#include "reader.h"
 
-namespace lexer {
-
-Lexer::Lexer(source::Reader &in, Reporter &err) : in(in), err(err) {}
+Lexer::Lexer(Reader &in, Reporter &err) : in(in), err(err) {}
 
 Token Lexer::peek() {
 	auto start = in;
@@ -118,4 +117,3 @@ Token Lexer::tok(Token::Type type, source::Location begin) {
 	return Token{.type = type, .loc = loc};
 }
 
-} // namespace lexer

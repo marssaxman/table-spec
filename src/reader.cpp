@@ -6,14 +6,13 @@
 
 #include <iostream>
 
+#include "reader.h"
 #include "source.h"
 
-namespace source {
+Reader::Reader(const std::vector<char> &buffer)
+    : buf(buffer.begin()), pos(buffer.begin()), end(buffer.end()) {}
 
-Range operator+(Range a, Range b) {
-	auto begin = std::min(a.begin, b.begin);
-	auto end = std::max(a.end, b.end);
-	return Range(begin, end);
+std::string Reader::get(source::Range r) {
+	return std::string(buf + r.begin, buf + r.end);
 }
 
-} // namespace source

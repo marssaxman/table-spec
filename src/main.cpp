@@ -42,9 +42,9 @@ int compile(const std::string &path) {
 		return EXIT_FAILURE;
 	Reporter err(file);
 
-	source::Reader r(file.buffer);
-	lexer::Lexer l(r, err);
-	parser::Parser p(l, err);
+	Reader r(file.buffer);
+	Lexer l(r, err);
+	Parser p(l, err);
 	auto root = p.parse();
 
 	if (root) {

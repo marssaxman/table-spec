@@ -10,28 +10,13 @@
 #include <vector>
 
 #include "error.h"
+#include "reader.h"
 #include "source.h"
-
-namespace lexer {
-
-struct Token {
-	enum Type : int32_t {
-		eof = 0,
-		ident = -1,
-		number = -2,
-		proc = -3,
-		query = -4,
-		schema = -5,
-		table = -6,
-		comma = ',',
-		semicolon = ';',
-	} type;
-	source::Range loc;
-};
+#include "token.h"
 
 class Lexer {
 public:
-	Lexer(source::Reader &, Reporter &);
+	Lexer(Reader &, Reporter &);
 	bool eof() const { return in.eof(); }
 	bool good() const { return in.good(); }
 	Token peek();
@@ -51,10 +36,9 @@ private:
 	void block_comment();
 	Token tok(Token::Type type, source::Location begin);
 
-	source::Reader &in;
+	Reader &in;
 	Reporter &err;
 
-	std::optional<source::Reader> forward;
+	std::optional<Reader> forward;
 };
 
-} // namespace lexer
