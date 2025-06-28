@@ -19,7 +19,7 @@ source code.
 
 ## Usage
 
-To build, simply `make`, then look for `bin/table-spec`.
+To build, simply `make`, then look for `build/table-spec`.
 
 Invoke `table-spec <FILE>` to process a schema file.
 
