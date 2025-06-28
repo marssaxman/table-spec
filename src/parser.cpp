@@ -14,7 +14,7 @@ using namespace cst;
 
 Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
 
-Node::Opt Parser::parse_ident(Token tk) {
+Node::Opt Parser::ident(Token tk) {
 	std::string value = in.get(tk.loc);
 	static const std::unordered_map<std::string, Token::Type> keywords{
 	    {"proc", Token::proc},
@@ -30,7 +30,7 @@ Node::Opt Parser::parse_ident(Token tk) {
 	}
 }
 
-Node::Opt Parser::parse_term() {
+Node::Opt Parser::term() {
 	Node::Opt out;
 	switch ((int)in.peek().type) {
 	case Token::eof:
@@ -44,13 +44,13 @@ Node::Opt Parser::parse_term() {
 	auto tk = in.take();
 	switch ((int)tk.type) {
 	case '(':
-		return parse_parens(tk);
+		return parens(tk);
 	case '[':
-		return parse_brackets(tk);
+		return brackets(tk);
 	case '{':
-		return parse_braces(tk);
+		return braces(tk);
 	case Token::ident:
-		return parse_ident(tk);
+		return ident(tk);
 	case Token::number:
 		out = std::make_unique<Number>(tk.loc);
 		break;
@@ -63,13 +63,13 @@ Node::Opt Parser::parse_term() {
 	return out;
 }
 
-Node::Opt Parser::parse_list() {
-	Node::Opt out = parse_term();
+Node::Opt Parser::list() {
+	Node::Opt out = term();
 	if (out) {
 		Node::Opt *chain = &out;
-		while (auto term = parse_term()) {
+		while (auto exp = term()) {
 			auto link = std::make_unique<List>(std::move(chain->value()));
-			link->next = std::move(term);
+			link->next = std::move(exp);
 			auto next = &link->next;
 			*chain = std::move(link);
 			chain = next;
@@ -78,49 +78,49 @@ Node::Opt Parser::parse_list() {
 	return out;
 }
 
-Node::Opt Parser::parse_commas() {
+Node::Opt Parser::commas() {
 	Node::Opt out;
 	Node::Opt *chain = &out;
 	while (in.good()) {
-		auto list = parse_list();
+		auto exp = list();
 		if (in.match(Token::comma)) {
-			auto link = std::make_unique<Comma>(std::move(list));
+			auto link = std::make_unique<Comma>(std::move(exp));
 			auto next = &link->next;
 			*chain = std::move(link);
 			chain = next;
 		} else {
-			*chain = std::move(list);
+			*chain = std::move(exp);
 			break;
 		}
 	}
 	return out;
 }
 
-Node::Opt Parser::parse_semicolons() {
+Node::Opt Parser::semicolons() {
 	Node::Opt out;
 	Node::Opt *chain = &out;
 	while (in.good()) {
-		auto commas = parse_commas();
+		auto exp = commas();
 		if (in.match(Token::semicolon)) {
-			auto link = std::make_unique<Semicolon>(std::move(commas));
+			auto link = std::make_unique<Semicolon>(std::move(exp));
 			auto next = &link->next;
 			*chain = std::move(link);
 			chain = next;
 		} else {
-			*chain = std::move(commas);
+			*chain = std::move(exp);
 			break;
 		}
 	}
 	return out;
 }
 
-Node::Opt Parser::parse_exp() { return parse_semicolons(); }
+Node::Opt Parser::expression() { return semicolons(); }
 
 template <typename T>
-cst::Node::Opt Parser::parse_group(Token tk, int endch) {
+cst::Node::Opt Parser::group(Token tk, int endch) {
 	auto begin = tk.loc;
 	in.next();
-	auto body = parse_exp();
+	auto body = expression();
 	tk = in.peek();
 	if (endch == tk.type) {
 		in.next();
@@ -130,20 +130,20 @@ cst::Node::Opt Parser::parse_group(Token tk, int endch) {
 	return std::make_unique<T>(begin + tk.loc, std::move(body));
 }
 
-Node::Opt Parser::parse_parens(Token tk) {
-	return parse_group<Parens>(tk, ')');
+Node::Opt Parser::parens(Token tk) {
+	return group<Parens>(tk, ')');
 }
 
-Node::Opt Parser::parse_brackets(Token tk) {
-	return parse_group<Brackets>(tk, ']');
+Node::Opt Parser::brackets(Token tk) {
+	return group<Brackets>(tk, ']');
 }
 
-Node::Opt Parser::parse_braces(Token tk) {
-	return parse_group<Braces>(tk, '}');
+Node::Opt Parser::braces(Token tk) {
+	return group<Braces>(tk, '}');
 }
 
 Node::Opt Parser::parse() {
-	auto out = parse_exp();
+	auto out = expression();
 	Token tk = in.take();
 	if (tk.type != Token::eof) {
 		err.report(tk.loc, "Unexpected token at end of file");

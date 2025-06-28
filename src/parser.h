@@ -16,16 +16,16 @@ public:
 	cst::Node::Opt parse();
 
 private:
-	cst::Node::Opt parse_ident(Token);
-	cst::Node::Opt parse_term();
-	cst::Node::Opt parse_list();
-	cst::Node::Opt parse_commas();
-	cst::Node::Opt parse_semicolons();
-	cst::Node::Opt parse_exp();
-	template <typename T> cst::Node::Opt parse_group(Token, int endch);
-	cst::Node::Opt parse_parens(Token);
-	cst::Node::Opt parse_brackets(Token);
-	cst::Node::Opt parse_braces(Token);
+	cst::Node::Opt ident(Token);
+	cst::Node::Opt term();
+	cst::Node::Opt list();
+	cst::Node::Opt commas();
+	cst::Node::Opt semicolons();
+	cst::Node::Opt expression();
+	template <typename T> cst::Node::Opt group(Token, int endch);
+	cst::Node::Opt parens(Token);
+	cst::Node::Opt brackets(Token);
+	cst::Node::Opt braces(Token);
 	Lexer &in;
 	Reporter &err;
 };
