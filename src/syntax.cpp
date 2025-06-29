@@ -4,9 +4,9 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include "cst.h"
+#include "syntax.h"
 
-namespace cst {
+namespace syntax {
 
 List::List(Node::Ptr value) : Node(Kind::List), value(std::move(value)) {}
 
@@ -35,4 +35,4 @@ Brackets::Brackets(Loc loc, Opt body)
 
 Braces::Braces(Loc loc, Opt body) : Group(Kind::Braces, loc, std::move(body)) {}
 
-} // namespace cst
+} // namespace syntax

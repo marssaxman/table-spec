@@ -11,7 +11,7 @@
 
 #include "source.h"
 
-namespace cst {
+namespace syntax {
 
 using Loc = source::Range;
 
@@ -110,4 +110,4 @@ struct Braces : public Group {
 	Braces(Loc, Opt body);
 };
 
-} // namespace cst
+} // namespace syntax

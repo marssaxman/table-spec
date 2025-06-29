@@ -8,7 +8,7 @@
 #include "parser.h"
 #include "token.h"
 
-using namespace cst;
+using namespace syntax;
 
 Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
 
@@ -99,7 +99,7 @@ Node::Opt Parser::semicolons() {
 Node::Opt Parser::expression() { return semicolons(); }
 
 template <typename T>
-cst::Node::Opt Parser::group(Token tk, int endch) {
+Node::Opt Parser::group(Token tk, int endch) {
 	auto begin = tk.loc;
 	in.next();
 	auto body = expression();
