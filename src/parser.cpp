@@ -4,8 +4,6 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-#include <unordered_map>
-
 #include "lexer.h"
 #include "parser.h"
 #include "token.h"
@@ -13,22 +11,6 @@
 using namespace cst;
 
 Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
-
-Node::Opt Parser::ident(Token tk) {
-	std::string value = in.get(tk.loc);
-	static const std::unordered_map<std::string, Token::Type> keywords{
-	    {"proc", Token::proc},
-	    {"query", Token::query},
-	    {"schema", Token::schema},
-	    {"table", Token::table},
-	};
-	auto iter = keywords.find(value);
-	if (iter != keywords.end()) {
-		return std::make_unique<Keyword>(tk.loc, iter->second);
-	} else {
-		return std::make_unique<Ident>(tk.loc);
-	}
-}
 
 Node::Opt Parser::term() {
 	Node::Opt out;
@@ -50,7 +32,7 @@ Node::Opt Parser::term() {
 	case '{':
 		return braces(tk);
 	case Token::ident:
-		return ident(tk);
+		return std::make_unique<Ident>(tk.loc);
 	case Token::number:
 		out = std::make_unique<Number>(tk.loc);
 		break;

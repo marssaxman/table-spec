@@ -16,7 +16,6 @@ public:
 	cst::Node::Opt parse();
 
 private:
-	cst::Node::Opt ident(Token);
 	cst::Node::Opt term();
 	cst::Node::Opt list();
 	cst::Node::Opt commas();
