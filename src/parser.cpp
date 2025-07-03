@@ -4,128 +4,60 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+#include <memory>
+
+#include "grammar.h"
 #include "lexer.h"
 #include "parser.h"
+#include "source.h"
 #include "token.h"
-
-using namespace syntax;
 
 Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
 
-Node::Opt Parser::term() {
-	Node::Opt out;
-	switch ((int)in.peek().type) {
-	case Token::eof:
-	case ')':
-	case ']':
-	case '}':
-	case ';':
-	case ',':
-		return out;
-	}
-	auto tk = in.take();
-	switch ((int)tk.type) {
-	case '(':
-		return parens(tk);
-	case '[':
-		return brackets(tk);
-	case '{':
-		return braces(tk);
-	case Token::ident:
-		return std::make_unique<Ident>(tk.loc);
-	case Token::number:
-		out = std::make_unique<Number>(tk.loc);
-		break;
-	default:
-		out = std::make_unique<Symbol>(tk.loc, tk.type);
-	}
-	if (out.has_value()) {
-		in.next();
-	}
-	return out;
-}
+/*
 
-Node::Opt Parser::list() {
-	Node::Opt out = term();
-	if (out) {
-		Node::Opt *chain = &out;
-		while (auto exp = term()) {
-			auto link = std::make_unique<List>(std::move(chain->value()));
-			link->next = std::move(exp);
-			auto next = &link->next;
-			*chain = std::move(link);
-			chain = next;
-		}
-	}
-	return out;
-}
+we're going to do a pratt parser
+this will be an expression language
+syntax blocks will be made of prefixes and subscripts
 
-Node::Opt Parser::commas() {
-	Node::Opt out;
-	Node::Opt *chain = &out;
-	while (in.good()) {
-		auto exp = list();
-		if (in.match(Token::comma)) {
-			auto link = std::make_unique<Comma>(std::move(exp));
-			auto next = &link->next;
-			*chain = std::move(link);
-			chain = next;
-		} else {
-			*chain = std::move(exp);
-			break;
-		}
-	}
-	return out;
-}
+so we'll do this:
 
-Node::Opt Parser::semicolons() {
-	Node::Opt out;
-	Node::Opt *chain = &out;
-	while (in.good()) {
-		auto exp = commas();
-		if (in.match(Token::semicolon)) {
-			auto link = std::make_unique<Semicolon>(std::move(exp));
-			auto next = &link->next;
-			*chain = std::move(link);
-			chain = next;
-		} else {
-			*chain = std::move(exp);
-			break;
-		}
-	}
-	return out;
-}
-
-Node::Opt Parser::expression() { return semicolons(); }
-
-template <typename T>
-Node::Opt Parser::group(Token tk, int endch) {
-	auto begin = tk.loc;
-	in.next();
-	auto body = expression();
-	tk = in.peek();
-	if (endch == tk.type) {
-		in.next();
+syntax::Node parse(min_bp = 0) {
+	// prefix operators
+	if (binding = prefix_op_token(lexer.peek()) {
+		exp = make_op_node(lexer.next(), parse(binding.right));
 	} else {
-		err.report(tk.loc, "Expected '" + std::string(1, endch) + "' here");
+		exp = term();
 	}
-	return std::make_unique<T>(begin + tk.loc, std::move(body));
+	do {
+		tk = lexer.peek();
+		// postfix operators
+		if (binding = postfix_op_token(tk)) {
+			if (binding.left < min_bp) break;
+			lexer.next();
+			// handle suffix groups here?
+			exp = make_op_node(tk, exp);
+			continue;
+		}
+		// infix operators
+		binding = infix_op_token(tk);
+		if (binding.left < min_bp) break;
+		lexer.next();
+		rhs = parse(binding.rght);
+		exp = make_op_node(tk, exp, rhs);
+	}
+	
+	return exp;
 }
 
-Node::Opt Parser::parens(Token tk) {
-	return group<Parens>(tk, ')');
+*/
+
+syntax::Node::Opt Parser::parse(grammar::Precedence min_prec) {
+	return std::nullopt;
 }
 
-Node::Opt Parser::brackets(Token tk) {
-	return group<Brackets>(tk, ']');
-}
-
-Node::Opt Parser::braces(Token tk) {
-	return group<Braces>(tk, '}');
-}
-
-Node::Opt Parser::parse() {
-	auto out = expression();
+syntax::Node::Opt Parser::parse() {
+	auto out = parse(0);
 	Token tk = in.take();
 	if (tk.type != Token::eof) {
 		err.report(tk.loc, "Unexpected token at end of file");

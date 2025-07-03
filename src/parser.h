@@ -6,26 +6,16 @@
 
 #pragma once
 
+#include "grammar.h"
 #include "syntax.h"
 #include "error.h"
-#include "token.h"
 
-class Parser {
-using Node = syntax::Node;
-public:
+struct Parser {
 	Parser(Lexer &in, Reporter &err);
-	Node::Opt parse();
+	syntax::Node::Opt parse();
 
 private:
-	Node::Opt term();
-	Node::Opt list();
-	Node::Opt commas();
-	Node::Opt semicolons();
-	Node::Opt expression();
-	template <typename T> Node::Opt group(Token, int endch);
-	Node::Opt parens(Token);
-	Node::Opt brackets(Token);
-	Node::Opt braces(Token);
+	syntax::Node::Opt parse(grammar::Precedence);
 	Lexer &in;
 	Reporter &err;
 };

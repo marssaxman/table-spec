@@ -19,7 +19,6 @@ struct Node {
 	virtual ~Node() = default;
 	const enum Kind {
 		List,
-		Keyword,
 		Ident,
 		Number,
 		Symbol,
@@ -36,78 +35,32 @@ protected:
 	Node(Kind kind) : kind(kind) {}
 };
 
-// Consecutive terms
-struct List : public Node {
-	List(Node::Ptr value);
-	Node::Ptr value;
-	Node::Opt next;
-};
-
-// Base class for terminal nodes
-struct Leaf : public Node {
+// Categories of operators based on position
+struct Prefix : public Node {
+	const Ptr value;
 protected:
-	Leaf(Kind, Loc);
-
-public:
-	const Loc loc;
+	Prefix(Kind kind, Loc, Node::Ptr&& value);
 };
 
-// Reserved identifier
-struct Keyword : public Leaf {
-	Keyword(Loc, int id);
-	const int id;
+struct Infix : public Node {
+	const Ptr lhs;
+	const Ptr rhs;
+protected:
+	Infix(Kind kind, Ptr&& lhs, Loc loc, Ptr&& rhs);
 };
 
-// Any other identifier
-struct Ident : public Leaf {
-	Ident(Loc);
+struct Postfix : public Node {
+	const Ptr value;
+protected:
+	Postfix(Kind kind, Ptr&& value, Loc);
 };
 
-// Numeric literal
-struct Number : public Leaf {
-	Number(Loc);
-};
-
-// Punctuation symbol
-struct Symbol : public Leaf {
-	Symbol(Loc, int ch);
-	const int ch;
-};
-
-// Semicolon-delimited sequence
-struct Semicolon : public Node {
-	Semicolon(Node::Opt value);
-	Node::Opt value;
-	Node::Opt next;
-};
-
-// Comma-delimited tuple
-struct Comma : public Node {
-	Comma(Node::Opt value);
-	Node::Opt value;
-	Node::Opt next;
-};
-
-// Base class for subexpression groups
 struct Group : public Node {
+	const Ptr value;
 protected:
-	Group(Kind, Loc, Opt body);
-
-public:
-	const Loc loc;
-	Opt body;
+	Group(Kind kind, Ptr&& value);
 };
 
-struct Parens : public Group {
-	Parens(Loc, Opt body);
-};
-
-struct Brackets : public Group {
-	Brackets(Loc, Opt body);
-};
-
-struct Braces : public Group {
-	Braces(Loc, Opt body);
-};
+// specific syntax classes
 
 } // namespace syntax

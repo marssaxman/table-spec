@@ -4,35 +4,22 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+#include <utility>
+
 #include "syntax.h"
 
 namespace syntax {
 
-List::List(Node::Ptr value) : Node(Kind::List), value(std::move(value)) {}
+Prefix::Prefix(Kind kind, Loc loc, Node::Ptr &&value):
+	Node(kind), value(std::move(value)) {}
 
-Leaf::Leaf(Kind kind, Loc loc) : Node(kind), loc(loc) {}
+Infix::Infix(Kind kind, Ptr&& lhs, Loc loc, Ptr&& rhs):
+	Node(kind), lhs(std::move(lhs)), rhs(std::move(rhs)) {}
 
-Keyword::Keyword(Loc loc, int id) : Leaf(Kind::Keyword, loc), id(id) {}
+Postfix::Postfix(Kind kind, Ptr&& value, Loc):
+	Node(kind), value(std::move(value)) {}
 
-Ident::Ident(Loc loc) : Leaf(Kind::Ident, loc) {}
-
-Number::Number(Loc loc) : Leaf(Kind::Number, loc) {}
-
-Symbol::Symbol(Loc loc, int ch) : Leaf(Kind::Symbol, loc), ch(ch) {}
-
-Semicolon::Semicolon(Node::Opt value)
-    : Node(Kind::Semicolon), value(std::move(value)) {}
-
-Comma::Comma(Node::Opt value) : Node(Kind::Comma), value(std::move(value)) {}
-
-Group::Group(Kind kind, Loc loc, Opt body)
-    : Node(kind), loc(loc), body(std::move(body)) {}
-
-Parens::Parens(Loc loc, Opt body) : Group(Kind::Parens, loc, std::move(body)) {}
-
-Brackets::Brackets(Loc loc, Opt body)
-    : Group(Kind::Brackets, loc, std::move(body)) {}
-
-Braces::Braces(Loc loc, Opt body) : Group(Kind::Braces, loc, std::move(body)) {}
+Group::Group(Kind kind, Ptr&& value):
+	Node(kind), value(std::move(value)) {}
 
 } // namespace syntax
