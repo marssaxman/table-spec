@@ -6,16 +6,19 @@
 
 #pragma once
 
+#include "error.h"
 #include "grammar.h"
 #include "syntax.h"
-#include "error.h"
+#include "token.h"
 
 struct Parser {
 	Parser(Lexer &in, Reporter &err);
 	syntax::Node::Opt parse();
 
 private:
-	syntax::Node::Opt parse(grammar::Precedence);
+	syntax::Node::Ptr parse(grammar::Precedence);
+	syntax::Node::Ptr term(Token tk);
+	syntax::Node::Ptr group(Token open, Token::Type close);
 	Lexer &in;
 	Reporter &err;
 };

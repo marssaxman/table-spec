@@ -20,7 +20,7 @@ using syntax::Node;
 struct Prefix {
 	Prefix(Precedence);
 	Precedence prec{};
-	virtual Node::Ptr make(source::Range, Node::Ptr&&) = 0;
+	virtual Node::Ptr make(source::Range, Node::Ptr&&) const = 0;
 	static const Prefix* match(Token);
 };
 
@@ -28,14 +28,14 @@ struct Infix {
 	Infix(Precedence left, Precedence right);
 	Precedence left{};
 	Precedence right{};
-	virtual Node::Ptr make(Node::Ptr&& l, source::Range tk, Node::Ptr&& r) = 0;
+	virtual Node::Ptr make(Node::Ptr&& l, source::Range tk, Node::Ptr&& r) const = 0;
 	static const Infix* match(Token tk);
 };
 
 struct Postfix {
 	Postfix(Precedence);
 	Precedence prec{};
-	Node::Ptr make(Node::Ptr&& val, source::Range tk);
+	virtual Node::Ptr make(Node::Ptr&& val, source::Range tk) const = 0;
 	static const Postfix* match(Token tk);
 };
 

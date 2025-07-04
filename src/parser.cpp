@@ -14,46 +14,44 @@
 
 Parser::Parser(Lexer &in, Reporter &err) : in(in), err(err) {}
 
-/*
-
-we're going to do a pratt parser
-this will be an expression language
-syntax blocks will be made of prefixes and subscripts
-
-so we'll do this:
-
-syntax::Node parse(min_bp = 0) {
-	// prefix operators
-	if (binding = prefix_op_token(lexer.peek()) {
-		exp = make_op_node(lexer.next(), parse(binding.right));
-	} else {
-		exp = term();
+syntax::Node::Ptr Parser::term(Token tk) {
+	switch (tk.type) {
+	case Token::ident:
+		return std::make_unique<syntax::Ident>(tk.loc, in.get(tk.loc));
+	case Token::number:
+		return std::make_unique<syntax::Number>(tk.loc, in.get(tk.loc));
+	default:
+		err.report(tk.loc, "Unexpected token");
+		return std::make_unique<syntax::Error>(tk.loc);
 	}
-	do {
-		tk = lexer.peek();
-		// postfix operators
-		if (binding = postfix_op_token(tk)) {
-			if (binding.left < min_bp) break;
-			lexer.next();
-			// handle suffix groups here?
-			exp = make_op_node(tk, exp);
-			continue;
-		}
-		// infix operators
-		binding = infix_op_token(tk);
-		if (binding.left < min_bp) break;
-		lexer.next();
-		rhs = parse(binding.rght);
-		exp = make_op_node(tk, exp, rhs);
-	}
-	
-	return exp;
 }
 
-*/
+syntax::Node::Ptr group(Token open, Token::Type close) {
+}
 
-syntax::Node::Opt Parser::parse(grammar::Precedence min_prec) {
-	return std::nullopt;
+
+syntax::Node::Ptr Parser::parse(grammar::Precedence min_prec) {
+	syntax::Node::Ptr exp;
+	Token tk = in.take();
+	if (auto op = grammar::Prefix::match(tk)) {
+		exp = op->make(tk.loc, parse(op->prec));
+	} else {
+		exp = term(tk);
+	}
+	while (tk.type != Token::eof) {
+		tk = in.peek();
+		if (auto op = grammar::Postfix::match(tk)) {
+			if (op->prec < min_prec) break;
+			in.next();
+			exp = op->make(std::move(exp), tk.loc);
+			continue;
+		}
+		auto op = grammar::Infix::match(tk);
+		if (op->left < min_prec) break;
+		in.next();
+		exp = op->make(std::move(exp), tk.loc, parse(op->right));
+	}
+	return exp;
 }
 
 syntax::Node::Opt Parser::parse() {

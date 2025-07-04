@@ -18,24 +18,25 @@ using Loc = source::Range;
 struct Node {
 	virtual ~Node() = default;
 	const enum Kind {
-		List,
+		Error,
 		Ident,
 		Number,
-		Symbol,
-		Semicolon,
-		Comma,
-		Parens,
-		Brackets,
-		Braces,
 	} kind;
+	const Loc loc;
 	using Ptr = std::unique_ptr<Node>;
 	using Opt = std::optional<Ptr>;
 
 protected:
-	Node(Kind kind) : kind(kind) {}
+	Node(Kind kind, Loc loc) : kind(kind), loc(loc) {}
 };
 
 // Categories of operators based on position
+
+struct Term : public Node {
+protected:
+	Term(Kind kind, Loc);
+};
+
 struct Prefix : public Node {
 	const Ptr value;
 protected:
@@ -58,9 +59,23 @@ protected:
 struct Group : public Node {
 	const Ptr value;
 protected:
-	Group(Kind kind, Ptr&& value);
+	Group(Kind kind, Loc open, Ptr&& value, Loc close);
 };
 
 // specific syntax classes
+
+struct Error : public Node {
+	Error(Loc);
+};
+
+struct Ident : public Term {
+	Ident(Loc, std::string);
+	const std::string text;
+};
+
+struct Number : public Term {
+	Number(Loc, std::string);
+	const std::string text;
+};
 
 } // namespace syntax
