@@ -18,7 +18,6 @@ struct Parser {
 private:
 	syntax::Node::Ptr parse(grammar::Precedence);
 	syntax::Node::Ptr term(Token tk);
-	syntax::Node::Ptr group(Token open, Token::Type close);
 	Lexer &in;
 	Reporter &err;
 };

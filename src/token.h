@@ -21,6 +21,7 @@ struct Token {
 		schema = -5,
 		table = -6,
 		comma = ',',
+		colon = ':',
 		semicolon = ';',
 	} type;
 	source::Range loc;

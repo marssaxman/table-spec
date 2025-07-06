@@ -14,7 +14,7 @@
 
 namespace grammar {
 
-using Precedence = uint32_t;
+enum Precedence : uint32_t;
 using syntax::Node;
 
 struct Prefix {
@@ -25,6 +25,7 @@ struct Prefix {
 };
 
 struct Infix {
+	Infix(Precedence);
 	Infix(Precedence left, Precedence right);
 	Precedence left{};
 	Precedence right{};

@@ -26,10 +26,6 @@ syntax::Node::Ptr Parser::term(Token tk) {
 	}
 }
 
-syntax::Node::Ptr group(Token open, Token::Type close) {
-}
-
-
 syntax::Node::Ptr Parser::parse(grammar::Precedence min_prec) {
 	syntax::Node::Ptr exp;
 	Token tk = in.take();
@@ -55,7 +51,7 @@ syntax::Node::Ptr Parser::parse(grammar::Precedence min_prec) {
 }
 
 syntax::Node::Opt Parser::parse() {
-	auto out = parse(0);
+	auto out = parse(grammar::Precedence{});
 	Token tk = in.take();
 	if (tk.type != Token::eof) {
 		err.report(tk.loc, "Unexpected token at end of file");

@@ -35,4 +35,8 @@ Ident::Ident(Loc loc, std::string text):
 Number::Number(Loc loc, std::string text):
 	Term(Kind::Number, loc), text(text) {}
 
+Declaration::Declaration(Ptr &&lhs, Loc loc, Ptr&& rhs):
+	Infix(Kind::Declaration, std::move(lhs), loc, std::move(rhs)) {}
+
+
 } // namespace syntax

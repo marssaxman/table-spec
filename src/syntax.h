@@ -21,6 +21,7 @@ struct Node {
 		Error,
 		Ident,
 		Number,
+		Declaration,
 	} kind;
 	const Loc loc;
 	using Ptr = std::unique_ptr<Node>;
@@ -76,6 +77,10 @@ struct Ident : public Term {
 struct Number : public Term {
 	Number(Loc, std::string);
 	const std::string text;
+};
+
+struct Declaration : public Infix {
+	Declaration(Ptr&& lhs, Loc loc, Ptr&& rhs);
 };
 
 } // namespace syntax

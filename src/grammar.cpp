@@ -12,24 +12,34 @@
 
 namespace grammar {
 
+using std::make_unique;
 using std::unique_ptr;
 using std::unordered_map;
+
+enum Precedence : uint32_t {
+	ROOT = 0,
+	DECLARATION = 2,
+};
 
 Prefix::Prefix(Precedence p): prec(p) {}
 
 template<typename T>
 struct Prefixer : public Prefix {
-	Node::Ptr make(source::Range tk, Node::Ptr&& value) override {
-		return std::make_unique<T>(tk, std::move(value));
+	using Prefix::Prefix;
+	Node::Ptr make(source::Range tk, Node::Ptr&& value) const override {
+		return make_unique<T>(tk, std::move(value));
 	}
 };
+
+Infix::Infix(Precedence x): left(x), right(x) {}
 
 Infix::Infix(Precedence l, Precedence r): left(l), right(r) {}
 
 template<typename T>
 struct Infixer : public Infix {
-	Node::Ptr make(Node::Ptr&& l, source::Range tk, Node::Ptr&& r) override {
-		return std::make_unique<T>(std::move(l), tk, std::move(r));
+	using Infix::Infix;
+	Node::Ptr make(Node::Ptr&& l, source::Range tk, Node::Ptr&& r) const override {
+		return make_unique<T>(std::move(l), tk, std::move(r));
 	}
 };
 
@@ -37,8 +47,9 @@ Postfix::Postfix(Precedence p): prec(p) {}
 
 template <typename T>
 struct Postfixer : public Postfix {
-	Node::Ptr make(Node::Ptr&& value, source::Range tk) override {
-		return std::make_unique<T>(std::move(value), tk);
+	using Postfix::Postfix;
+	Node::Ptr make(Node::Ptr&& value, source::Range tk) const override {
+		return make_unique<T>(std::move(value), tk);
 	}
 };
 
@@ -54,11 +65,12 @@ const Prefix* Prefix::match(Token tk) {
 }
 
 const Infix* Infix::match(Token tk) {
-	static const unordered_map<Token::Type, unique_ptr<Infix>> ops = {
+	static const unordered_map<Token::Type, const Infix*> ops = {
+		{Token::colon, new Infixer<syntax::Declaration>(DECLARATION)},
 	};
 	auto iter = ops.find(tk.type);
 	if (iter != ops.end()) {
-		return iter->second.get();
+		return iter->second;
 	} else {
 		return nullptr;
 	}
