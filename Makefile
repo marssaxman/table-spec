@@ -10,7 +10,7 @@ TARGET:=build/$(EXECNAME)
 default: $(TARGET)
 $(TARGET): $(OBJECTS)
 	@mkdir -p $(@D)
-	g++ -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS)
 build/%.o: src/%.cpp
 	@mkdir -p $(@D)
 	$(CC) -std=c++17 $(CCFLAGS) -Isrc -MD -MP -c $< -o $@
@@ -30,7 +30,8 @@ TESTSRCS:=$(shell find test -name *.cpp)
 TESTBINS:=$(basename $(patsubst test/%,build/test/%,$(TESTSRCS)))
 build/test/%: test/%.cpp
 	@mkdir -p $(@D)
-	$(CC) -std=c++17 $(CCFLAGS) -Itests -c $< -o $@
-test: $(TESTBINS) $(TARGET)
-	@echo $(TESTBINS)
+	$(CC) -std=c++17 $(CCFLAGS) -Itest $< -o $@ $(LDFLAGS)
+
+test: $(OBJECTS) $(TESTBINS)
+	for test in $(TESTBINS); do $$test; done
 
