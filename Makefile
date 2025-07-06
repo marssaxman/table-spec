@@ -6,7 +6,6 @@ LDFLAGS:=-lstdc++
 # boilerplate rules
 SOURCES:=$(shell find src -name *.c -o -name *.cpp)
 OBJECTS:=$(addsuffix .o,$(basename $(patsubst src/%,build/%,$(SOURCES))))
-CCFLAGS+=-Isrc -MD -MP
 TARGET:=build/$(EXECNAME)
 default: $(TARGET)
 $(TARGET): $(OBJECTS)
@@ -14,10 +13,10 @@ $(TARGET): $(OBJECTS)
 	g++ -o $@ $^ $(LDFLAGS)
 build/%.o: src/%.cpp
 	@mkdir -p $(@D)
-	$(CC) -std=c++17 $(CCFLAGS) -c $< -o $@
+	$(CC) -std=c++17 $(CCFLAGS) -Isrc -MD -MP -c $< -o $@
 build/%.o: src/%.c
 	@mkdir -p $(@D)
-	$(CC) -std=c17 $(CCFLAGS) -c $< -o $@
+	$(CC) -std=c17 $(CCFLAGS) -Isrc -MD -MP -c $< -o $@
 clean:
 	-rm -rf build
 install:
@@ -26,4 +25,12 @@ format:
 	clang-format -i $(shell find src -name *.c -o -name *.cpp -o -name *.h)
 .PHONY: clean install format
 -include $(shell find build -name *.d)
+
+TESTSRCS:=$(shell find test -name *.cpp)
+TESTBINS:=$(basename $(patsubst test/%,build/test/%,$(TESTSRCS)))
+build/test/%: test/%.cpp
+	@mkdir -p $(@D)
+	$(CC) -std=c++17 $(CCFLAGS) -Itests -c $< -o $@
+test: $(TESTBINS) $(TARGET)
+	@echo $(TESTBINS)
 
