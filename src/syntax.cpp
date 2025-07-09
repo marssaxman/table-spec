@@ -29,10 +29,10 @@ Group::Group(Kind kind, Loc open, Ptr&& value, Loc close):
 Error::Error(Loc loc):
 	Node(Kind::Error, loc) {}
 
-Ident::Ident(Loc loc, std::string text):
+Ident::Ident(Loc loc, std::string_view text):
 	Term(Kind::Ident, loc), text(text) {}
 
-Number::Number(Loc loc, std::string text):
+Number::Number(Loc loc, std::string_view text):
 	Term(Kind::Number, loc), text(text) {}
 
 Declaration::Declaration(Ptr &&lhs, Loc loc, Ptr&& rhs):

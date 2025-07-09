@@ -7,7 +7,7 @@
 #pragma once
 
 #include <cstdint>
-#include <string>
+#include <string_view>
 
 #include "source.h"
 
@@ -25,6 +25,6 @@ struct Token {
 		semicolon = ';',
 	} type;
 	source::Range loc;
-	static Token from_identifier(const std::string&, source::Range loc);
+	static Token from_identifier(std::string_view, source::Range loc);
 };
 

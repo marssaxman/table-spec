@@ -7,6 +7,7 @@
 #pragma once
 
 #include <optional>
+#include <string_view>
 #include <vector>
 
 #include "error.h"
@@ -23,7 +24,7 @@ public:
 	void next();
 	Token take();
 	bool match(Token::Type);
-	std::string get(source::Range loc) { return in.get(loc); }
+	std::string_view get(source::Range loc) { return in.get(loc); }
 
 private:
 	Token ident(source::Location begin);

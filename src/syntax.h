@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <optional>
+#include <string_view>
 
 #include "source.h"
 
@@ -70,13 +71,13 @@ struct Error : public Node {
 };
 
 struct Ident : public Term {
-	Ident(Loc, std::string);
-	const std::string text;
+	Ident(Loc, std::string_view);
+	const std::string_view text;
 };
 
 struct Number : public Term {
-	Number(Loc, std::string);
-	const std::string text;
+	Number(Loc, std::string_view);
+	const std::string_view text;
 };
 
 struct Declaration : public Infix {

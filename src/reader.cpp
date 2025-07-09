@@ -4,15 +4,17 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+#include <cassert>
 #include <iostream>
 
 #include "reader.h"
 #include "source.h"
 
-Reader::Reader(const std::vector<char> &buffer)
-    : buf(buffer.begin()), pos(buffer.begin()), end(buffer.end()) {}
+Reader::Reader(std::string_view buf)
+    : buf(buf), pos(buf.begin()), end(buf.end()) {}
 
-std::string Reader::get(source::Range r) {
-	return std::string(buf + r.begin, buf + r.end);
+std::string_view Reader::get(source::Range r) {
+	assert(r.good());
+	return std::string_view(buf.data() + r.begin, r.end - r.begin);
 }
 

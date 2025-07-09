@@ -7,13 +7,19 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "source.h"
 
 struct File {
-	std::string get(source::Range);
+	File() {}
+	File(const std::string &path, std::vector<char> &&buffer);
+	bool good() const;
+	std::string_view text();
+	std::string_view get(source::Range);
 	std::pair<unsigned, unsigned> line_and_column(source::Location);
-	std::string path;
+	const std::string path;
+private:
 	std::vector<char> buffer;
 };

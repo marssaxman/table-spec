@@ -6,13 +6,13 @@
 
 #pragma once
 
-#include <vector>
+#include <string_view>
 
 #include "source.h"
 
 class Reader {
 public:
-	Reader(const std::vector<char> &buffer);
+	Reader(std::string_view buffer);
 	bool eof() const { return pos == end; }
 	bool good() const { return pos < end; }
 	char peek() const { return eof() ? 0 : *pos; }
@@ -20,13 +20,13 @@ public:
 	char take() { return eof() ? (pad++, 0) : *pos++; }
 	bool match(int ch) { return (ch == peek()) ? (next(), true) : false; }
 	void back() { pad ? (void)pad-- : (void)pos--; }
-	source::Location loc() const { return source::Location(pos - buf); }
-	std::string get(source::Range);
+	source::Location loc() const { return source::Location(pos - buf.begin()); }
+	std::string_view get(source::Range);
 
 private:
-	std::vector<char>::const_iterator buf;
-	std::vector<char>::const_iterator pos;
-	std::vector<char>::const_iterator end;
+	std::string_view buf;
+	std::string_view::const_iterator pos;
+	std::string_view::const_iterator end;
 	unsigned pad = 0;
 };
 

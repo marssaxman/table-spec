@@ -16,33 +16,32 @@
 #include "parser.h"
 #include "source.h"
 
-int read(const std::string &path, File &out) {
+File read(const std::string &path) {
 	std::ifstream file(path, std::ios::binary | std::ios::ate);
 	std::streamsize size = file.tellg();
 	file.seekg(0, std::ios::beg);
 	if (file.fail()) {
 		std::cerr << "cannot open " << path << std::endl;
-		return EXIT_FAILURE;
+		return File();
 	}
 
 	std::vector<char> buffer(size);
 	if (file.read(buffer.data(), size)) {
-		out.path = path;
-		out.buffer = std::move(buffer);
-		return EXIT_SUCCESS;
+		return File(path, std::move(buffer));
 	} else {
 		std::cerr << "failed to read " << path << std::endl;
-		return EXIT_FAILURE;
+		return File();
 	}
 }
 
 int compile(const std::string &path) {
-	File file;
-	if (read(path, file))
+	File file = read(path);
+	if (!file.good()) {
 		return EXIT_FAILURE;
+	}
 	Reporter err(file);
 
-	Reader r(file.buffer);
+	Reader r(file.text());
 	Lexer l(r, err);
 	Parser p(l, err);
 	auto root = p.parse();

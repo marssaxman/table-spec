@@ -6,12 +6,27 @@
 
 #include <cassert>
 #include <string>
+#include <string_view>
 
 #include "file.h"
 
-std::string File::get(source::Range loc) {
+File::File(const std::string &path, std::vector<char> &&buffer):
+	path(path), buffer(std::move(buffer)) {}
+
+bool File::good() const {
+	return !path.empty();
+}
+
+std::string_view File::text() {
+	return std::string_view(buffer.data(), buffer.size());
+}
+
+std::string_view File::get(source::Range loc) {
+	assert(loc.good());
 	assert(loc.begin < buffer.size() && loc.end <= buffer.size());
-	return std::string(buffer.begin() + loc.begin, buffer.begin() + loc.end);
+	auto ptr = buffer.data() + loc.begin;
+	auto len = loc.end - loc.begin;
+	return std::string_view(ptr, len);
 }
 
 std::pair<unsigned, unsigned> File::line_and_column(source::Location loc) {

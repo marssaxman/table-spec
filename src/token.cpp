@@ -8,14 +8,14 @@
 
 #include <unordered_map>
 
-Token Token::from_identifier(const std::string& text, source::Range loc) {
+Token Token::from_identifier(std::string_view text, source::Range loc) {
 	static const std::unordered_map<std::string, Type> keywords {
 	    {"proc", proc},
 	    {"query", query},
 	    {"schema", schema},
 	    {"table", table},
 	};
-	auto iter = keywords.find(text);
+	auto iter = keywords.find(std::string(text));
 	Token::Type type = (iter != keywords.end())? iter->second: ident;
 	return Token{.type = type, .loc = loc};
 }
