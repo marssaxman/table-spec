@@ -46,6 +46,9 @@ syntax::Node::Ptr Parser::parse(grammar::Precedence min_prec) {
 			if (op->left < min_prec) break;
 			in.next();
 			exp = op->make(std::move(exp), tk.loc, parse(op->right));
+		} else {
+			err.report(tk.loc, "Unexpected token");
+			break;
 		}
 	}
 	return exp;
