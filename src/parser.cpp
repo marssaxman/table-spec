@@ -42,10 +42,11 @@ syntax::Node::Ptr Parser::parse(grammar::Precedence min_prec) {
 			exp = op->make(std::move(exp), tk.loc);
 			continue;
 		}
-		auto op = grammar::Infix::match(tk);
-		if (op->left < min_prec) break;
-		in.next();
-		exp = op->make(std::move(exp), tk.loc, parse(op->right));
+		if (auto op = grammar::Infix::match(tk)) {
+			if (op->left < min_prec) break;
+			in.next();
+			exp = op->make(std::move(exp), tk.loc, parse(op->right));
+		}
 	}
 	return exp;
 }
